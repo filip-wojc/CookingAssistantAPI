@@ -20,8 +20,6 @@
 
   <ItemGroup>
     <Folder Include="Database\Entities\" />
-    <Folder Include="Services\" />
-    <Folder Include="Tools\" />
   </ItemGroup>
 
 </Project>
