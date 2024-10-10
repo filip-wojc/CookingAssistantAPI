@@ -1,4 +1,8 @@
 
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using System.Text.Json.Serialization;
+
 namespace CookingAssistantAPI
 {
     public class Program
@@ -9,12 +13,23 @@ namespace CookingAssistantAPI
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(o =>
+            {
+                o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                o.JsonSerializerOptions.WriteIndented = true;
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddHttpContextAccessor();
+
             var app = builder.Build();
+            app.UseStaticFiles();
+            app.UseExceptionHandler(_ => { });
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -25,6 +40,7 @@ namespace CookingAssistantAPI
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
