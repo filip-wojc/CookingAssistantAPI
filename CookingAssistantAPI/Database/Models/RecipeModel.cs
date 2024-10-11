@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using Newtonsoft.Json;
 
-namespace CookingAssistantAPI.Models
+namespace CookingAssistantAPI.Database.Models
 {
     public class RecipeModel
     {
@@ -21,8 +21,8 @@ namespace CookingAssistantAPI.Models
         [JsonProperty("dish_type")]
         public string DishType { get; set; }
 
-        public RecipeModel() 
-        { 
+        public RecipeModel()
+        {
             Nutrients = new Dictionary<string, string>();
             Times = new Dictionary<string, string>();
         }
