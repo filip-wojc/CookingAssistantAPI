@@ -11,9 +11,9 @@ namespace CookingAssistantAPI.DTO
         public string? Difficulty { get; set; }
         public int? TimeInMinutes {  get; set; }
         public int CategoryId { get; set; }
-        public virtual ICollection<string>? IngredientNames { get; set; }
-        public virtual ICollection<string>? Steps { get; set; }
-        public virtual ICollection<NutrientCreateDTO>? Nutrients { get; set; }
+        public List<string>? IngredientNames { get; set; }
+        public List<string>? Steps { get; set; }
+        public List<NutrientCreateDTO>? NutrientsData { get; set; }
         
     }
 }

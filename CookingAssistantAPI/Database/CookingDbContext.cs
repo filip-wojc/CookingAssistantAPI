@@ -17,6 +17,8 @@ namespace CookingAssistantAPI.Database
         public DbSet<Category> Categories { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasAnnotation("Sqlite:ForeignKeys", true);
+
             modelBuilder.Entity<User>()
            .HasMany(u => u.CreatedRecipes)
            .WithOne(r => r.CreatedBy)
@@ -31,6 +33,7 @@ namespace CookingAssistantAPI.Database
                     j => j.HasOne<Recipe>().WithMany().HasForeignKey("RecipeId"),
                     j => j.HasOne<User>().WithMany().HasForeignKey("UserId")
                 );
+
         }
 
     }
