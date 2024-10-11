@@ -1,6 +1,11 @@
 
+using CookingAssistantAPI.Database;
+using CookingAssistantAPI.Repositories;
+using CookingAssistantAPI.Tools;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
 namespace CookingAssistantAPI
@@ -18,13 +23,30 @@ namespace CookingAssistantAPI
                 o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 o.JsonSerializerOptions.WriteIndented = true;
             });
+
+
+            var repositoriesToRegister = new List<IRegistrationResource>()
+            {
+                new RepositoryRegistration()
+            };
+
+            foreach (var resource in repositoriesToRegister)
+            {
+                resource.Register(builder.Services);
+            }
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<CookingDbContext>(
+                o => o.UseSqlite("Data Source=recipes.db")
+                );
+
             builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddExceptionHandler<AppExceptionHandler>();
             builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();

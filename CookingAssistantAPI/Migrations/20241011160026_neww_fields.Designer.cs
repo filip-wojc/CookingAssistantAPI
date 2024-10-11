@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CookingAssistantAPI.Migrations
 {
     [DbContext(typeof(CookingDbContext))]
-    [Migration("20241011125634_favouritesRecipies")]
-    partial class favouritesRecipies
+    [Migration("20241011160026_neww_fields")]
+    partial class neww_fields
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,8 +83,8 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<string>("Difficulty")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("TEXT");
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
@@ -93,6 +93,9 @@ namespace CookingAssistantAPI.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<int>("Serves")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TimeInMinutes")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("VoteCount")
@@ -141,28 +144,6 @@ namespace CookingAssistantAPI.Migrations
                     b.HasIndex("RecipeId");
 
                     b.ToTable("Steps");
-                });
-
-            modelBuilder.Entity("CookingAssistantAPI.Database.Models.Time", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("TimeValue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("Times");
                 });
 
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.User", b =>
@@ -265,17 +246,6 @@ namespace CookingAssistantAPI.Migrations
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("CookingAssistantAPI.Database.Models.Time", b =>
-                {
-                    b.HasOne("CookingAssistantAPI.Database.Models.Recipe", "Recipe")
-                        .WithMany("Times")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Recipe");
-                });
-
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.User", b =>
                 {
                     b.HasOne("CookingAssistantAPI.Database.Models.Role", "Role")
@@ -338,8 +308,6 @@ namespace CookingAssistantAPI.Migrations
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.Recipe", b =>
                 {
                     b.Navigation("Steps");
-
-                    b.Navigation("Times");
                 });
 
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.User", b =>

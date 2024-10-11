@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CookingAssistantAPI.Migrations
 {
-    [DbContext(typeof(RecipeDbContext))]
+    [DbContext(typeof(CookingDbContext))]
     [Migration("20241011124324_Users_and_roles")]
     partial class Users_and_roles
     {

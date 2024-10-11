@@ -4,20 +4,17 @@ using System.Net.Sockets;
 
 namespace CookingAssistantAPI.Database
 {
-    public class RecipeDbContext : DbContext
+    public class CookingDbContext : DbContext
     {
+        public CookingDbContext(DbContextOptions<CookingDbContext> options) : base(options)
+        {
+            
+        }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Step> Steps { get; set; }
         public DbSet<Nutrient> Nutrients { get; set; }
-        public DbSet<Time> Times { get; set; }
         public DbSet<Category> Categories { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite("Data Source=recipes.db");
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
