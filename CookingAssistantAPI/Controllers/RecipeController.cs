@@ -40,5 +40,17 @@ namespace CookingAssistantAPI.Controllers
             return Ok(recipe);
         }
 
+        [HttpGet("nutrientsList")]
+        public async Task<ActionResult<List<string>>> GetNutrientsList()
+        {
+            var nutrients = await _repository.GetAllNutrientsListAsync();
+            return Ok(nutrients);
+        }
+        [HttpGet("ingredientsList")]
+        public async Task<ActionResult<List<string>>> GetIngredientsList()
+        {
+            var ingredients = await _repository.GetAllIngredientsListAsync();
+            return Ok(ingredients);
+        }
     }
 }

@@ -95,6 +95,38 @@ namespace CookingAssistantAPI.Repositories
 
             return recipe;
         }
+        
+        public async Task<List<string>> GetAllIngredientsListAsync()
+        {
+
+            var ingredients = await _context.Ingredients
+                .Select(i => i.IngredientName)
+                .ToListAsync();
+
+            if (ingredients is null)
+            {
+                throw new IngredientsNotFoundException("Ingredients not found");
+            }
+
+            return ingredients;
+        }
+
+        public async Task<List<string>> GetAllNutrientsListAsync()
+        {
+
+            var nutrients = await _context.Nutrients
+                .Select(n => n.NutrientName)
+                .ToListAsync();
+
+            if (nutrients is null)
+            {
+                throw new NutrientsNotFoundException("Nutrients not found");
+            }
+
+            return nutrients;
+        }
+
+
 
         /*
         public async Task<bool> DeleteRecipeAsync(Recipe recipe)
