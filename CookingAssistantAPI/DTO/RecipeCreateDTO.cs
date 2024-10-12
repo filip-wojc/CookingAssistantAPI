@@ -13,7 +13,7 @@ namespace CookingAssistantAPI.DTO
         public int CategoryId { get; set; }
         public List<string>? IngredientNames { get; set; }
         public List<string>? Steps { get; set; }
-        public List<NutrientCreateDTO>? NutrientsData { get; set; }
+        public List<string>? NutrientNames { get; set; }
         
     }
 }

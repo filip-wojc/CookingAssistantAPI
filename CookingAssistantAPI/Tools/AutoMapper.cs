@@ -16,9 +16,9 @@ namespace CookingAssistantAPI.Tools
             CreateMap<RecipeCreateDTO, Recipe>()
                 .ForMember(dest => dest.ImageData, o => o.MapFrom(src => src.ImageData))
                 .ForMember(dest => dest.Steps, o => o.MapFrom(src => MapSteps(src.Steps)))
-                .ForMember(dest => dest.Ingredients, o => o.MapFrom(src => MapIngredients(src.IngredientNames)))
-                .ForMember(dest => dest.Nutrients, o => o.MapFrom(src => src.NutrientsData));
-                
+                .ForMember(dest => dest.RecipeIngredients, o => o.MapFrom(src => MapRecipeIngredients(src.IngredientNames)))
+                .ForMember(dest => dest.RecipeNutrients, o => o.MapFrom(src => MapRecipeNutrients(src.NutrientNames)));
+
         }
 
         private ICollection<Step> MapSteps(ICollection<string>? steps)
@@ -32,17 +32,27 @@ namespace CookingAssistantAPI.Tools
             }).ToList();
         }
 
-        private ICollection<Ingredient> MapIngredients(ICollection<string>? ingredientNames)
+        private ICollection<RecipeIngredient> MapRecipeIngredients(ICollection<string>? ingredientNames)
         {
-            if (ingredientNames == null) return new List<Ingredient>();
+            if (ingredientNames == null) return new List<RecipeIngredient>();
 
-            return ingredientNames.Select(name => new Ingredient
+            // Map the ingredient names to RecipeIngredient objects
+            return ingredientNames.Select(name => new RecipeIngredient
             {
-                IngredientName = name
-                
+                Ingredient = new Ingredient { IngredientName = name } // Creating new Ingredient objects
             }).ToList();
         }
 
+        private ICollection<RecipeNutrient> MapRecipeNutrients(ICollection<string>? nutrientNames)
+        {
+            if (nutrientNames == null) return new List<RecipeNutrient>();
+
+            // Map the NutrientCreateDTO to RecipeNutrient objects
+            return nutrientNames.Select(name => new RecipeNutrient
+            {
+                Nutrient = new Nutrient { NutrientName = name}
+            }).ToList();
+        }
 
     }
 }
