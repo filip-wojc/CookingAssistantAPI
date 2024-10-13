@@ -1,6 +1,7 @@
 
 using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Repositories;
+using CookingAssistantAPI.Services;
 using CookingAssistantAPI.Tools;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -27,7 +28,8 @@ namespace CookingAssistantAPI
 
             var repositoriesToRegister = new List<IRegistrationResource>()
             {
-                new RepositoryRegistration()
+                new RepositoryRegistration(),
+                new ServicesRegistration()
             };
 
             foreach (var resource in repositoriesToRegister)

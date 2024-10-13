@@ -11,7 +11,6 @@ namespace CookingAssistantAPI.Tools
         {
             CreateMap<IFormFile, byte[]>().ConvertUsing<FormFileToByteArrayConverter>();
 
-            CreateMap<NutrientCreateDTO, Nutrient>();
 
             CreateMap<RecipeCreateDTO, Recipe>()
                 .ForMember(dest => dest.ImageData, o => o.MapFrom(src => src.ImageData))
@@ -50,7 +49,10 @@ namespace CookingAssistantAPI.Tools
             // Map the NutrientCreateDTO to RecipeNutrient objects
             return nutrientNames.Select(name => new RecipeNutrient
             {
-                Nutrient = new Nutrient { NutrientName = name}
+                Nutrient = new Nutrient
+                {
+                    NutrientName = name,
+                },
             }).ToList();
         }
 

@@ -1,4 +1,5 @@
 ﻿using CookingAssistantAPI.Database.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace CookingAssistantAPI.DTO
 {
@@ -12,8 +13,12 @@ namespace CookingAssistantAPI.DTO
         public int? TimeInMinutes {  get; set; }
         public int CategoryId { get; set; }
         public List<string>? IngredientNames { get; set; }
+        public List<string>? IngredientQuantities { get; set; }
+        public List<string>? IngredientUnits { get; set; }
         public List<string>? Steps { get; set; }
         public List<string>? NutrientNames { get; set; }
+        public List<string>? NutrientQuantities { get; set; }
+        public List<string>? NutrientUnits { get; set; }
         
     }
 }

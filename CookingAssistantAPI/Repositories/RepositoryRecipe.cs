@@ -13,7 +13,7 @@ namespace CookingAssistantAPI.Repositories
         {
             _context = context;
         }
-        public async Task<bool> AddRecipeAsync(Recipe recipe)
+        public async Task AddRecipeAsync(Recipe recipe)
         {
             // Check and attach existing ingredients
             foreach (var recipeIngredient in recipe.RecipeIngredients)
@@ -51,9 +51,6 @@ namespace CookingAssistantAPI.Repositories
 
             // Now add the recipe
             await _context.Recipes.AddAsync(recipe);
-            int success = await _context.SaveChangesAsync();
-
-            return success > 0;
         }
 
         public async Task<Recipe> GetRecipeByIdAsync(int recipeId)
@@ -124,6 +121,11 @@ namespace CookingAssistantAPI.Repositories
             }
 
             return nutrients;
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
         }
 
 
