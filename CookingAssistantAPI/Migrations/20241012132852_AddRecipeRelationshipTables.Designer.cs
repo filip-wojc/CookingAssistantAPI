@@ -3,6 +3,7 @@ using System;
 using CookingAssistantAPI.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CookingAssistantAPI.Migrations
 {
     [DbContext(typeof(CookingDbContext))]
-    partial class RecipeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241012132852_AddRecipeRelationshipTables")]
+    partial class AddRecipeRelationshipTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,6 +57,9 @@ namespace CookingAssistantAPI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NutrientName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -124,7 +130,7 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasIndex("IngredientId");
 
-                    b.ToTable("RecipeIngredients");
+                    b.ToTable("RecipeIngredient");
                 });
 
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.RecipeNutrient", b =>
@@ -145,7 +151,7 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasIndex("NutrientId");
 
-                    b.ToTable("RecipeNutrients");
+                    b.ToTable("RecipeNutrient");
                 });
 
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.Role", b =>
@@ -196,7 +202,7 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("UserName")
@@ -206,7 +212,7 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("UserFavoriteRecipe", b =>
@@ -294,9 +300,7 @@ namespace CookingAssistantAPI.Migrations
                 {
                     b.HasOne("CookingAssistantAPI.Database.Models.Role", "Role")
                         .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
                 });

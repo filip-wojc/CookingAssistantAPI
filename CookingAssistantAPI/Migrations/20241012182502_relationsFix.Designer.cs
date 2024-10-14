@@ -3,6 +3,7 @@ using System;
 using CookingAssistantAPI.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CookingAssistantAPI.Migrations
 {
     [DbContext(typeof(CookingDbContext))]
-    partial class RecipeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241012182502_relationsFix")]
+    partial class relationsFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,7 +199,7 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("UserName")
@@ -294,9 +297,7 @@ namespace CookingAssistantAPI.Migrations
                 {
                     b.HasOne("CookingAssistantAPI.Database.Models.Role", "Role")
                         .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
                 });

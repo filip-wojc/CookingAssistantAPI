@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string? IngredientName { get; set; }
-        public virtual ICollection<Recipe>? Recipes { get; set; } = new List<Recipe>();
+        // many to many relationship table reference
+        public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
     }
 }
