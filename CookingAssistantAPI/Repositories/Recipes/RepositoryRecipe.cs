@@ -1,10 +1,9 @@
 ﻿using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.Exceptions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace CookingAssistantAPI.Repositories
+namespace CookingAssistantAPI.Repositories.Recipes
 {
     public class RepositoryRecipe : IRepositoryRecipe
     {
@@ -92,7 +91,7 @@ namespace CookingAssistantAPI.Repositories
 
             return recipe;
         }
-        
+
         public async Task<List<string>> GetAllIngredientsListAsync()
         {
 
@@ -128,18 +127,10 @@ namespace CookingAssistantAPI.Repositories
             return await _context.SaveChangesAsync();
         }
 
-
-
-        /*
-        public async Task<bool> DeleteRecipeAsync(Recipe recipe)
+        public Task<bool> DeleteRecipeByIdAsync(int recipeId)
         {
-        int success = 0;
-        await _context
-        success = await _context.SaveChangesAsync();
-
-        return success > 0;
+            throw new NotImplementedException();
         }
-        */
     }
 
 }

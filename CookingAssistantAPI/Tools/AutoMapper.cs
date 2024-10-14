@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO;
+using CookingAssistantAPI.DTO.Users;
 using CookingAssistantAPI.Tools.Converters;
 
 namespace CookingAssistantAPI.Tools

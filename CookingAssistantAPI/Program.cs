@@ -1,10 +1,12 @@
 
 using CookingAssistantAPI.Database;
+using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.Repositories;
 using CookingAssistantAPI.Services;
 using CookingAssistantAPI.Tools;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
@@ -36,6 +38,8 @@ namespace CookingAssistantAPI
             {
                 resource.Register(builder.Services);
             }
+
+            builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

@@ -1,4 +1,5 @@
-﻿using CookingAssistantAPI.Tools;
+﻿using CookingAssistantAPI.Services.UserServices;
+using CookingAssistantAPI.Tools;
 
 namespace CookingAssistantAPI.Services
 {
@@ -7,6 +8,7 @@ namespace CookingAssistantAPI.Services
         public void Register(IServiceCollection services)
         {
             services.AddScoped<IRecipeService, RecipeService>();
+            services.AddScoped<IUserService, UserService>();
         }
     }
 }

@@ -1,13 +1,20 @@
-﻿using FluentValidation;
+﻿using CookingAssistantAPI.Database;
+using CookingAssistantAPI.DTO;
+using FluentValidation;
 
-namespace CookingAssistantAPI.DTO.Validators
+namespace CookingAssistantAPI.Tools.Validators
 {
     public class RecipeCreateValidator : AbstractValidator<RecipeCreateDTO>
     {
-        public RecipeCreateValidator()
+        private readonly CookingDbContext _context;
+        public RecipeCreateValidator(CookingDbContext context)
         {
+            _context = context;
+
             RuleFor(r => r).Must(HaveSameListSize)
                 .WithMessage("Ingredients or nutrients invalid data");
+            RuleFor(r => r.CategoryId).Must(CategoryExists);
+            RuleFor(r => r.ImageData).NotEmpty();
         }
 
         private bool HaveSameListSize(RecipeCreateDTO dto)
@@ -20,5 +27,20 @@ namespace CookingAssistantAPI.DTO.Validators
 
             return IngredientsSameSize && NutrientsSameSize;
         }
+
+        private bool CategoryExists(int categoryId)
+        {
+            return _context.Categories.FirstOrDefault(c => c.Id == categoryId) != null;
+
+        }
+
+        /*
+         * TODO : Check for null fields
+         * 
+         * 
+         */
+
+
+
     }
 }

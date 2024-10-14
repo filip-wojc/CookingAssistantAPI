@@ -2,6 +2,7 @@
 using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO;
 using CookingAssistantAPI.Repositories;
+using CookingAssistantAPI.Repositories.Recipes;
 using Microsoft.EntityFrameworkCore;
 
 namespace CookingAssistantAPI.Services
