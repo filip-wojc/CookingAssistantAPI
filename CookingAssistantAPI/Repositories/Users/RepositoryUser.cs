@@ -1,5 +1,7 @@
 ﻿using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Database.Models;
+using CookingAssistantAPI.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CookingAssistantAPI.Repositories.Users
 {
@@ -19,5 +21,22 @@ namespace CookingAssistantAPI.Repositories.Users
             }
             return false;
         }
+        // NEEDS TO BE VALIDATED BEFORE USING
+        /*
+        public async Task<bool> RemoveUserFromDbAsync(int userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                throw new NotFoundException("User to delete not found");
+            }
+
+            _context.Users.Remove(user);
+            var result = await _context.SaveChangesAsync();
+
+            return result > 0;
+        }
+        */
     }
 }

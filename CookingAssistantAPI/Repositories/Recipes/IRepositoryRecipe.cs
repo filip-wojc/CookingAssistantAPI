@@ -11,6 +11,6 @@ namespace CookingAssistantAPI.Repositories
         Task<List<string>> GetAllIngredientsListAsync();
         Task<List<string>> GetAllNutrientsListAsync();
         Task<int> SaveChangesAsync();
-        Task<bool> DeleteRecipeByIdAsync(int recipeId);
+        // Task<bool> DeleteRecipeByIdAsync(int recipeId);
     }
 }
