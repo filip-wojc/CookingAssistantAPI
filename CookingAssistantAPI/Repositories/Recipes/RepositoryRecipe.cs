@@ -127,10 +127,23 @@ namespace CookingAssistantAPI.Repositories.Recipes
             return await _context.SaveChangesAsync();
         }
 
-        public Task<bool> DeleteRecipeByIdAsync(int recipeId)
+        // USER VALIDATION BEFORE REMOVING RECIPE
+        /*
+        public async Task<bool> DeleteRecipeByIdAsync(int recipeId, int userId)
         {
-            throw new NotImplementedException();
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
+
+            if(recipe == null)
+            {
+                throw new NotFoundException("Recipe to delete not found");
+            }
+
+            _context.Recipes.Remove(recipe);
+            var result = await _context.SaveChangesAsync();
+
+            return result > 0;
         }
+        */
     }
 
 }

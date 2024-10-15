@@ -49,6 +49,22 @@ namespace CookingAssistantAPI.Services
             return false;
         }
 
+        // VALIDATE THIS METHOD BEFORE USING
+        /*
+        public async Task<bool> RemoveRecipe(int recipeId, int userId)
+        {
+            var recipe = await _repository.GetRecipeByIdAsync(recipeId);
+
+            if (recipe == null)
+            {
+                return false;
+            }
+
+            // FINISH LATER
+
+        }
+        */
+
         public async Task<List<string>> GetAllIngredientsAsync()
         {
             return await _repository.GetAllIngredientsListAsync();

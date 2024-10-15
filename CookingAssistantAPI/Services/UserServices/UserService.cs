@@ -30,5 +30,17 @@ namespace CookingAssistantAPI.Services.UserServices
             }
             return false;
         }
+
+        // ADD USER ACCOUNT DELETE REQUEST VALIDATION HERE
+        /*
+        public async Task<bool> DeleteUser(int userId)
+        {
+            if (await _repository.RemoveUserFromDbAsync(userId))
+            {
+                return true;
+            }
+            return false;
+        }
+        */
     }
 }
