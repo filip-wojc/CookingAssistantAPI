@@ -11,6 +11,7 @@ namespace CookingAssistantAPI.Tools
             (int statusCode, string message) = exception switch
             {
                 NotFoundException ex => (ex.Code, ex.Message),
+                BadRequestException ex => (ex.Code, ex.Message),
                 _ => default
             };
 

@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using CookingAssistantAPI.Database.Models;
-using CookingAssistantAPI.DTO;
+using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.Repositories;
 using CookingAssistantAPI.Repositories.Recipes;
+using CookingAssistantAPI.Services.UserServices;
 using Microsoft.EntityFrameworkCore;
 
 namespace CookingAssistantAPI.Services
@@ -11,14 +12,17 @@ namespace CookingAssistantAPI.Services
     {
         private readonly IRepositoryRecipe _repository;
         private readonly IMapper _mapper;
-        public RecipeService(IRepositoryRecipe repository, IMapper mapper)
+        private readonly IUserContextService _userContext;
+        public RecipeService(IRepositoryRecipe repository, IMapper mapper, IUserContextService userContext)
         {
             _repository = repository;
             _mapper = mapper;
+            _userContext = userContext;
         }
         public async Task<bool> AddRecipe(RecipeCreateDTO recipeDto)
         {
             var recipe = _mapper.Map<Recipe>(recipeDto);
+            recipe.CreatedById = _userContext.UserId;
 
             var nutrientData = recipe.RecipeNutrients
                 .Zip(recipeDto.NutrientQuantities, (recipeNutrient, quantity) => new { recipeNutrient, quantity })
@@ -49,6 +53,22 @@ namespace CookingAssistantAPI.Services
             return false;
         }
 
+        // VALIDATE THIS METHOD BEFORE USING
+        /*
+        public async Task<bool> RemoveRecipe(int recipeId, int userId)
+        {
+            var recipe = await _repository.GetRecipeByIdAsync(recipeId);
+
+            if (recipe == null)
+            {
+                return false;
+            }
+
+            // FINISH LATER
+
+        }
+        */
+
         public async Task<List<string>> GetAllIngredientsAsync()
         {
             return await _repository.GetAllIngredientsListAsync();
@@ -59,14 +79,16 @@ namespace CookingAssistantAPI.Services
             return await _repository.GetAllNutrientsListAsync();
         }
 
-        public async Task<Recipe> GetRecipeByIdAsync(int recipeId)
+        public async Task<RecipeGetDTO> GetRecipeByIdAsync(int recipeId)
         {
-            return await _repository.GetRecipeByIdAsync(recipeId);
+            var recipe = await _repository.GetRecipeByIdAsync(recipeId);
+            return _mapper.Map<RecipeGetDTO>(recipe);
         }
 
-        public async Task<Recipe> GetRecipeByNameAsync(string recipeName)
+        public async Task<RecipeGetDTO> GetRecipeByNameAsync(string recipeName)
         {
-            return await _repository.GetRecipeByNameAsync(recipeName);
+            var recipe = await _repository.GetRecipeByNameAsync(recipeName);
+            return _mapper.Map<RecipeGetDTO>(recipe);
         }
     }
 }

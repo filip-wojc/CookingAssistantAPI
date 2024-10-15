@@ -49,7 +49,7 @@ namespace CookingAssistantAPI.Database
                 .HasOne(rn => rn.Nutrient)
                 .WithMany(n => n.RecipeNutrients)
                 .HasForeignKey(rn => rn.NutrientId);
-            /*
+            
 
             // Unique constraints
             modelBuilder.Entity<Ingredient>()
@@ -59,7 +59,15 @@ namespace CookingAssistantAPI.Database
             modelBuilder.Entity<Nutrient>()
                 .HasIndex(n => n.NutrientName)
                 .IsUnique();
-            */
+            
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.UserName)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
             // Many to one relationship User <--- Recipe
             modelBuilder.Entity<User>()

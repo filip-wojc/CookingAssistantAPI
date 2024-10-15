@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using CookingAssistantAPI.Database.Models;
-using CookingAssistantAPI.DTO;
+using CookingAssistantAPI.DTO.RecipeIngredients;
+using CookingAssistantAPI.DTO.RecipeNutrients;
+using CookingAssistantAPI.DTO.Recipes;
+using CookingAssistantAPI.DTO.Steps;
 using CookingAssistantAPI.DTO.Users;
 using CookingAssistantAPI.Tools.Converters;
 
@@ -11,6 +14,19 @@ namespace CookingAssistantAPI.Tools
         public AutoMapper()
         {
             CreateMap<IFormFile, byte[]>().ConvertUsing<FormFileToByteArrayConverter>();
+
+            CreateMap<Step, StepGetDTO>();
+            CreateMap<RecipeIngredient, RecipeIngredientGetDTO>()
+                .ForMember(r => r.IngredientName, o => o.MapFrom(src => src.Ingredient.IngredientName));
+            CreateMap<RecipeNutrient, RecipeNutrientGetDTO>()
+                .ForMember(r => r.NutrientName, o => o.MapFrom(src => src.Nutrient.NutrientName));
+
+            CreateMap<Recipe, RecipeGetDTO>()
+                .ForMember(r => r.AuthorName, o => o.MapFrom(src => src.CreatedBy.UserName))
+                .ForMember(r => r.CategoryName, o => o.MapFrom(src => src.Category.Name))
+                .ForMember(r => r.Ingredients, o => o.MapFrom(src => src.RecipeIngredients))
+                .ForMember(r => r.Nutrients, o => o.MapFrom(src => src.RecipeNutrients))
+                .ForMember(r => r.Steps, o => o.MapFrom(src => src.Steps));
 
 
             CreateMap<RecipeCreateDTO, Recipe>()

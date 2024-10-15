@@ -1,13 +1,13 @@
 ﻿using CookingAssistantAPI.Database.Models;
-using CookingAssistantAPI.DTO;
+using CookingAssistantAPI.DTO.Recipes;
 
 namespace CookingAssistantAPI.Services
 {
     public interface IRecipeService
     {
         Task<bool> AddRecipe(RecipeCreateDTO recipeDto);
-        Task<Recipe> GetRecipeByIdAsync(int recipeId);
-        Task<Recipe> GetRecipeByNameAsync(string recipeName);
+        Task<RecipeGetDTO> GetRecipeByIdAsync(int recipeId);
+        Task<RecipeGetDTO> GetRecipeByNameAsync(string recipeName);
         Task<List<string>> GetAllNutrientsAsync();
         Task<List<string>> GetAllIngredientsAsync();
     }
