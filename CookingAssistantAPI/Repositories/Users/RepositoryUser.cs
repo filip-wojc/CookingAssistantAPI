@@ -21,6 +21,16 @@ namespace CookingAssistantAPI.Repositories.Users
             }
             return false;
         }
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            var user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                throw new BadRequestException("Invalid email address");
+            }
+            return user;
+        }
         // NEEDS TO BE VALIDATED BEFORE USING
         /*
         public async Task<bool> RemoveUserFromDbAsync(int userId)

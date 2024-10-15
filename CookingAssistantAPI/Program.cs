@@ -8,7 +8,9 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace CookingAssistantAPI
@@ -41,9 +43,54 @@ namespace CookingAssistantAPI
 
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
+            var authParameters = new JwtParameters();
+            builder.Configuration.GetSection("Authentication").Bind(authParameters);
+            builder.Services.AddSingleton(authParameters);
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = "Bearer";
+                o.DefaultScheme = "Bearer";
+                o.DefaultChallengeScheme = "Bearer";
+            }).AddJwtBearer(cfg =>
+            {
+
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = authParameters.JwtIssuer,
+                    ValidAudience = authParameters.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authParameters.JwtKey)),
+                };
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HogwartsAPI", Version = "v1" });
+
+                // Konfiguracja JWT w Swaggerze
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement{
+        {
+            new OpenApiSecurityScheme{
+                Reference = new OpenApiReference{
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+            }});
+            });
 
             builder.Services.AddDbContext<CookingDbContext>(
                 o => o.UseSqlite("Data Source=recipes.db")

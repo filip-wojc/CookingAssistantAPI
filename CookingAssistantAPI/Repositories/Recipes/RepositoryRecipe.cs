@@ -101,7 +101,7 @@ namespace CookingAssistantAPI.Repositories.Recipes
 
             if (ingredients is null)
             {
-                throw new IngredientsNotFoundException("Ingredients not found");
+                throw new NotFoundException("Ingredients not found");
             }
 
             return ingredients;
@@ -116,7 +116,7 @@ namespace CookingAssistantAPI.Repositories.Recipes
 
             if (nutrients is null)
             {
-                throw new NutrientsNotFoundException("Nutrients not found");
+                throw new NotFoundException("Nutrients not found");
             }
 
             return nutrients;

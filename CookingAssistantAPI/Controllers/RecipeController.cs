@@ -5,6 +5,7 @@ using AutoMapper;
 using Newtonsoft.Json;
 using CookingAssistantAPI.Services;
 using CookingAssistantAPI.DTO.Recipes;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -20,6 +21,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         //[Consumes("multipart/form-data")]
         public async Task<ActionResult> CreateRecipe([FromForm] RecipeCreateDTO recipeDto)
         {

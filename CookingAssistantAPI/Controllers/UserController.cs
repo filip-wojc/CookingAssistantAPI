@@ -28,6 +28,15 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
+        [HttpPost]
+        [Route("login")]
+        public async Task<ActionResult> LoginUser([FromBody] UserLoginDTO user)
+        {
+            string token = await _service.GenerateToken(user);
+            return Ok(token);
+        }
+
+
         /*
         [HttpPost]
         [Route("login")]
