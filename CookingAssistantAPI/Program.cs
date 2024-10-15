@@ -66,7 +66,7 @@ namespace CookingAssistantAPI
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
