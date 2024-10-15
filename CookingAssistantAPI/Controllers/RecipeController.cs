@@ -1,10 +1,10 @@
 ﻿using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.Repositories;
-using CookingAssistantAPI.DTO;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Newtonsoft.Json;
 using CookingAssistantAPI.Services;
+using CookingAssistantAPI.DTO.Recipes;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -30,10 +30,10 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
-        [HttpGet("{*recipeName}")]
-        public async Task<ActionResult<Recipe>> GetRecipeByName([FromRoute] string recipeName)
+        [HttpGet("{*recipeId}")]
+        public async Task<ActionResult<RecipeGetDTO>> GetRecipeById([FromRoute] int recipeId)
         {
-            var recipe = await _service.GetRecipeByNameAsync(recipeName);
+            var recipe = await _service.GetRecipeByIdAsync(recipeId);
             return Ok(recipe);
         }
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CookingAssistantAPI.Database.Models;
-using CookingAssistantAPI.DTO;
+using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.Repositories;
 using CookingAssistantAPI.Repositories.Recipes;
 using Microsoft.EntityFrameworkCore;
@@ -75,14 +75,16 @@ namespace CookingAssistantAPI.Services
             return await _repository.GetAllNutrientsListAsync();
         }
 
-        public async Task<Recipe> GetRecipeByIdAsync(int recipeId)
+        public async Task<RecipeGetDTO> GetRecipeByIdAsync(int recipeId)
         {
-            return await _repository.GetRecipeByIdAsync(recipeId);
+            var recipe = await _repository.GetRecipeByIdAsync(recipeId);
+            return _mapper.Map<RecipeGetDTO>(recipe);
         }
 
-        public async Task<Recipe> GetRecipeByNameAsync(string recipeName)
+        public async Task<RecipeGetDTO> GetRecipeByNameAsync(string recipeName)
         {
-            return await _repository.GetRecipeByNameAsync(recipeName);
+            var recipe = await _repository.GetRecipeByNameAsync(recipeName);
+            return _mapper.Map<RecipeGetDTO>(recipe);
         }
     }
 }

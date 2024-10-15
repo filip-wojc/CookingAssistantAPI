@@ -1,5 +1,5 @@
 ﻿using CookingAssistantAPI.Database;
-using CookingAssistantAPI.DTO;
+using CookingAssistantAPI.DTO.Recipes;
 using FluentValidation;
 
 namespace CookingAssistantAPI.Tools.Validators
