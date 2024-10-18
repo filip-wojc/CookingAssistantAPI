@@ -3,6 +3,7 @@ using System;
 using CookingAssistantAPI.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CookingAssistantAPI.Migrations
 {
     [DbContext(typeof(CookingDbContext))]
-    partial class RecipeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241018132941_Recipe_Ratings")]
+    partial class Recipe_Ratings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,6 +70,33 @@ namespace CookingAssistantAPI.Migrations
                     b.ToTable("Nutrients");
                 });
 
+            modelBuilder.Entity("CookingAssistantAPI.Database.Models.Rating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RatedRecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RatingAuthorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RatingText")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RatingValue")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RatedRecipeId");
+
+                    b.HasIndex("RatingAuthorId");
+
+                    b.ToTable("Ratings");
+                });
+
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.Recipe", b =>
                 {
                     b.Property<int>("Id")
@@ -91,7 +121,7 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("Ratings")
+                    b.Property<float>("Ratings")
                         .HasColumnType("REAL");
 
                     b.Property<int>("Serves")
@@ -152,33 +182,6 @@ namespace CookingAssistantAPI.Migrations
                     b.HasIndex("NutrientId");
 
                     b.ToTable("RecipeNutrients");
-                });
-
-            modelBuilder.Entity("CookingAssistantAPI.Database.Models.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("RatedRecipeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ReviewAuthorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RatedRecipeId");
-
-                    b.HasIndex("ReviewAuthorId");
-
-                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.Role", b =>
@@ -263,6 +266,25 @@ namespace CookingAssistantAPI.Migrations
                     b.ToTable("UserFavoriteRecipe");
                 });
 
+            modelBuilder.Entity("CookingAssistantAPI.Database.Models.Rating", b =>
+                {
+                    b.HasOne("CookingAssistantAPI.Database.Models.Recipe", "RatedRecipe")
+                        .WithMany("UserRatings")
+                        .HasForeignKey("RatedRecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CookingAssistantAPI.Database.Models.User", "RatingAuthor")
+                        .WithMany("Ratings")
+                        .HasForeignKey("RatingAuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RatedRecipe");
+
+                    b.Navigation("RatingAuthor");
+                });
+
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.Recipe", b =>
                 {
                     b.HasOne("CookingAssistantAPI.Database.Models.Category", "Category")
@@ -316,23 +338,6 @@ namespace CookingAssistantAPI.Migrations
                     b.Navigation("Nutrient");
 
                     b.Navigation("Recipe");
-                });
-
-            modelBuilder.Entity("CookingAssistantAPI.Database.Models.Review", b =>
-                {
-                    b.HasOne("CookingAssistantAPI.Database.Models.Recipe", "RatedRecipe")
-                        .WithMany("UsersReviews")
-                        .HasForeignKey("RatedRecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CookingAssistantAPI.Database.Models.User", "ReviewAuthor")
-                        .WithMany("Reviews")
-                        .HasForeignKey("ReviewAuthorId");
-
-                    b.Navigation("RatedRecipe");
-
-                    b.Navigation("ReviewAuthor");
                 });
 
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.Step", b =>
@@ -395,14 +400,14 @@ namespace CookingAssistantAPI.Migrations
 
                     b.Navigation("Steps");
 
-                    b.Navigation("UsersReviews");
+                    b.Navigation("UserRatings");
                 });
 
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.User", b =>
                 {
                     b.Navigation("CreatedRecipes");
 
-                    b.Navigation("Reviews");
+                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }

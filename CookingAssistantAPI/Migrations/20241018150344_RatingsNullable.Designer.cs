@@ -3,6 +3,7 @@ using System;
 using CookingAssistantAPI.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CookingAssistantAPI.Migrations
 {
     [DbContext(typeof(CookingDbContext))]
-    partial class RecipeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241018150344_RatingsNullable")]
+    partial class RatingsNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,7 +94,7 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("Ratings")
+                    b.Property<float?>("Ratings")
                         .HasColumnType("REAL");
 
                     b.Property<int>("Serves")
@@ -166,7 +169,7 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<int>("RatedRecipeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ReviewAuthorId")
+                    b.Property<int>("ReviewAuthorId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
@@ -328,7 +331,9 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasOne("CookingAssistantAPI.Database.Models.User", "ReviewAuthor")
                         .WithMany("Reviews")
-                        .HasForeignKey("ReviewAuthorId");
+                        .HasForeignKey("ReviewAuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("RatedRecipe");
 

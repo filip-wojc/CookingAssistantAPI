@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using CookingAssistantAPI.Services;
 using CookingAssistantAPI.DTO.Recipes;
 using Microsoft.AspNetCore.Authorization;
+using CookingAssistantAPI.DTO.Reviews;
+using CookingAssistantAPI.Services.ReviewServices;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -15,9 +17,11 @@ namespace CookingAssistantAPI.Controllers
     public class RecipeController : ControllerBase
     {
         private readonly IRecipeService _service;
-        public RecipeController(IRecipeService service)
+        private readonly IReviewService _reviewService;
+        public RecipeController(IRecipeService service, IReviewService reviewService)
         {
             _service = service;
+            _reviewService = reviewService;
         }
 
         [HttpPost]
@@ -50,6 +54,17 @@ namespace CookingAssistantAPI.Controllers
         {
             var ingredients = await _service.GetAllIngredientsAsync();
             return Ok(ingredients);
+        }
+
+        [HttpPost("{recipeId}/review")]
+        [Authorize]
+        public async Task<ActionResult> CreateReview([FromRoute] int recipeId, ReviewCreateDTO dto)
+        {
+            if (await _reviewService.AddReviewAsync(dto, recipeId))
+            {
+                return Created();
+            }
+            return BadRequest();
         }
     }
 }

@@ -11,5 +11,6 @@ namespace CookingAssistantAPI.Database.Models
         public int RoleId { get; set; }
         public virtual ICollection<Recipe>? CreatedRecipes { get; set; } = new List<Recipe>();
         public virtual ICollection<Recipe>? FavouriteRecipes { get; set; } = new List<Recipe>();
+        public virtual ICollection<Review>? Reviews { get; set; } = new List<Review>();
     }
 }
