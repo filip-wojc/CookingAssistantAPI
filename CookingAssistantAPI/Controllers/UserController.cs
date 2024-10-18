@@ -3,6 +3,7 @@ using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO.Users;
 using CookingAssistantAPI.Repositories;
 using CookingAssistantAPI.Services.UserServices;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -29,11 +30,13 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("login")]
         public async Task<ActionResult> LoginUser([FromBody] UserLoginDTO user)
         {
             string token = await _service.GenerateToken(user);
-            return Ok(token);
+            var response = new LogInResponseDTO { Token = token };
+            return Ok(response);
         }
 
 
