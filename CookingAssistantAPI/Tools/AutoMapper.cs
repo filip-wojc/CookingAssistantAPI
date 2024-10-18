@@ -3,6 +3,7 @@ using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO.RecipeIngredients;
 using CookingAssistantAPI.DTO.RecipeNutrients;
 using CookingAssistantAPI.DTO.Recipes;
+using CookingAssistantAPI.DTO.Reviews;
 using CookingAssistantAPI.DTO.Steps;
 using CookingAssistantAPI.DTO.Users;
 using CookingAssistantAPI.Tools.Converters;
@@ -34,6 +35,8 @@ namespace CookingAssistantAPI.Tools
                 .ForMember(dest => dest.Steps, o => o.MapFrom(src => MapSteps(src.Steps)))
                 .ForMember(dest => dest.RecipeIngredients, o => o.MapFrom(src => MapRecipeIngredients(src.IngredientNames)))
                 .ForMember(dest => dest.RecipeNutrients, o => o.MapFrom(src => MapRecipeNutrients(src.NutrientNames)));
+
+            CreateMap<ReviewCreateDTO, Review>();
 
         }
 
