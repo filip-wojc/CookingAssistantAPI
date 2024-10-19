@@ -6,5 +6,6 @@ namespace CookingAssistantAPI.Services.UserServices
     {
         Task<bool> RegisterUser(UserRegisterDTO dto);
         Task<string> GenerateToken(UserLoginDTO dto);
+        Task<bool> AddRecipeToFavourites(int recipeId);
     }
 }

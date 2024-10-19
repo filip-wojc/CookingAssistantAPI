@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO.Recipes;
+using CookingAssistantAPI.Exceptions;
 using CookingAssistantAPI.Repositories;
 using CookingAssistantAPI.Repositories.Recipes;
 using CookingAssistantAPI.Services.UserServices;
@@ -53,21 +54,14 @@ namespace CookingAssistantAPI.Services
             return false;
         }
 
-        // VALIDATE THIS METHOD BEFORE USING
-        /*
-        public async Task<bool> RemoveRecipe(int recipeId, int userId)
+        public async Task<bool> DeleteRecipeByIdAsync(int recipeId)
         {
-            var recipe = await _repository.GetRecipeByIdAsync(recipeId);
-
-            if (recipe == null)
+            if(await _repository.DeleteRecipeByIdAsync(recipeId, _userContext.UserId))
             {
-                return false;
+                return true;
             }
-
-            // FINISH LATER
-
+            return false;
         }
-        */
 
         public async Task<List<string>> GetAllIngredientsAsync()
         {
@@ -77,6 +71,12 @@ namespace CookingAssistantAPI.Services
         public async Task<List<string>> GetAllNutrientsAsync()
         {
             return await _repository.GetAllNutrientsListAsync();
+        }
+
+        public async Task<List<RecipeGetDTO>> GetAllRecipesAsync()
+        {
+            var recipes = await _repository.GetAllRecipesAsync();
+            return _mapper.Map<List<RecipeGetDTO>>(recipes);
         }
 
         public async Task<RecipeGetDTO> GetRecipeByIdAsync(int recipeId)
@@ -89,6 +89,16 @@ namespace CookingAssistantAPI.Services
         {
             var recipe = await _repository.GetRecipeByNameAsync(recipeName);
             return _mapper.Map<RecipeGetDTO>(recipe);
+        }
+
+        public async Task<byte[]> GetRecipeImageAsync(int recipeId)
+        {
+            var image = await _repository.GetRecipeImageAsync(recipeId);
+            if (image == null)
+            {
+                throw new BadRequestException("This recipe does not have an image");
+            }
+            return image;
         }
     }
 }

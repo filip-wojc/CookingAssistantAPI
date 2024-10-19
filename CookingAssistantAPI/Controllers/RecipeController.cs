@@ -36,11 +36,36 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
+        [HttpDelete("{*recipeId}")]
+        [Authorize]
+        public async Task<ActionResult> DeleteRecipe([FromRoute] int recipeId)
+        {
+            if (await _service.DeleteRecipeByIdAsync(recipeId))
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+
         [HttpGet("{*recipeId}")]
         public async Task<ActionResult<RecipeGetDTO>> GetRecipeById([FromRoute] int recipeId)
         {
             var recipe = await _service.GetRecipeByIdAsync(recipeId);
             return Ok(recipe);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<RecipeGetDTO>>> GetAllRecipes()
+        {
+            var recipes = await _service.GetAllRecipesAsync();
+            return Ok(recipes);
+        }
+
+        [HttpGet("image/{recipeId}")]
+        public async Task<ActionResult<byte[]>> GetRecipeImage([FromRoute] int recipeId)
+        {
+            var imageData = await _service.GetRecipeImageAsync(recipeId);
+            return File(imageData, "image/jpeg");
         }
 
         [HttpGet("nutrientsList")]

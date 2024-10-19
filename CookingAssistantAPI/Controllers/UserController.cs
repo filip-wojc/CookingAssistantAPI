@@ -39,7 +39,16 @@ namespace CookingAssistantAPI.Controllers
             return Ok(response);
         }
 
-
+        [HttpPost("favourite/{recipeId}")]
+        [Authorize]
+        public async Task<ActionResult> AddRecipeToFavourites([FromRoute] int recipeId)
+        {
+            if (await _service.AddRecipeToFavourites(recipeId))
+            {
+                return Created();
+            }
+            return BadRequest();
+        }
         /*
         [HttpPost]
         [Route("login")]

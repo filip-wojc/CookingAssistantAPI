@@ -12,6 +12,27 @@ namespace CookingAssistantAPI.Repositories.Users
         {
             _context = context;
         }
+
+        public async Task<bool> AddRecipeToFavourites(int recipeId, int? userId)
+        {
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
+            if (recipe is null)
+            {
+                throw new NotFoundException("Recipe not found");
+            }
+            var user = await _context.Users.Include(u => u.FavouriteRecipes).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
+            {
+                throw new NotFoundException("User not found");
+            }
+            user.FavouriteRecipes?.Add(recipe);
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public async Task<bool> AddUserToDbAsync(User user)
         {
             await _context.Users.AddAsync(user);
