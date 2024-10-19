@@ -45,6 +45,15 @@ namespace CookingAssistantAPI
 
             var authParameters = new JwtParameters();
             builder.Configuration.GetSection("Authentication").Bind(authParameters);
+
+            builder.Services.AddHttpLogging(logging =>
+            {
+                logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+                logging.RequestBodyLogLimit = 4096; // limit the size of the request body to log
+                logging.ResponseBodyLogLimit = 4096; // limit the size of the response body to log
+                logging.MediaTypeOptions.AddText("application/json"); // specify media types to log
+            });
+
             builder.Services.AddSingleton(authParameters);
             builder.Services.AddAuthentication(o =>
             {
@@ -105,6 +114,8 @@ namespace CookingAssistantAPI
             var app = builder.Build();
             app.UseStaticFiles();
             app.UseExceptionHandler(_ => { });
+
+            app.UseHttpLogging();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
