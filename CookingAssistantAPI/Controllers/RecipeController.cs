@@ -44,6 +44,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("nutrientsList")]
+        [Authorize]
         public async Task<ActionResult<List<string>>> GetNutrientsList()
         {
             var nutrients = await _service.GetAllNutrientsAsync();
