@@ -14,13 +14,16 @@ namespace CookingAssistantAPI.Services.UserServices
     public class UserService : IUserService
     {
         private readonly IRepositoryUser _repository;
+        private readonly IUserContextService _userContext;
         private readonly IPasswordHasher<User> _hasher;
         private readonly JwtParameters _jwtParameters;
-        public UserService(IRepositoryUser repository, IPasswordHasher<User> hasher, JwtParameters jwtParameters)
+        public UserService(IRepositoryUser repository, IPasswordHasher<User> hasher,
+            JwtParameters jwtParameters, IUserContextService userContext)
         {
             _hasher = hasher;
             _repository = repository;
             _jwtParameters = jwtParameters;
+            _userContext = userContext;
         }
 
         public async Task<bool> RegisterUser(UserRegisterDTO dto)
@@ -68,6 +71,15 @@ namespace CookingAssistantAPI.Services.UserServices
             var tokenHandler = new JwtSecurityTokenHandler();
             return tokenHandler.WriteToken(token);
 
+        }
+
+        public async Task<bool> AddRecipeToFavourites(int recipeId)
+        {
+            if (await _repository.AddRecipeToFavourites(recipeId, _userContext.UserId))
+            {
+                return true;
+            }
+            return false;
         }
 
         // ADD USER ACCOUNT DELETE REQUEST VALIDATION HERE
