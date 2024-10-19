@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO.Recipes;
+using CookingAssistantAPI.Exceptions;
 using CookingAssistantAPI.Repositories;
 using CookingAssistantAPI.Repositories.Recipes;
 using CookingAssistantAPI.Services.UserServices;
@@ -88,6 +89,16 @@ namespace CookingAssistantAPI.Services
         {
             var recipe = await _repository.GetRecipeByNameAsync(recipeName);
             return _mapper.Map<RecipeGetDTO>(recipe);
+        }
+
+        public async Task<byte[]> GetRecipeImageAsync(int recipeId)
+        {
+            var image = await _repository.GetRecipeImageAsync(recipeId);
+            if (image == null)
+            {
+                throw new BadRequestException("This recipe does not have an image");
+            }
+            return image;
         }
     }
 }

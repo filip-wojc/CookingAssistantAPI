@@ -61,6 +61,13 @@ namespace CookingAssistantAPI.Controllers
             return Ok(recipes);
         }
 
+        [HttpGet("image/{recipeId}")]
+        public async Task<ActionResult<byte[]>> GetRecipeImage([FromRoute] int recipeId)
+        {
+            var imageData = await _service.GetRecipeImageAsync(recipeId);
+            return File(imageData, "image/jpeg");
+        }
+
         [HttpGet("nutrientsList")]
         public async Task<ActionResult<List<string>>> GetNutrientsList()
         {

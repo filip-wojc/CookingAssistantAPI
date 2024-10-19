@@ -9,6 +9,7 @@ namespace CookingAssistantAPI.Repositories
         Task<Recipe> GetRecipeByIdAsync(int recipeId);
         Task<Recipe> GetRecipeByNameAsync(string recipeName);
         Task<List<Recipe>> GetAllRecipesAsync();
+        Task<byte[]?> GetRecipeImageAsync(int recipeId);
         Task<List<string>> GetAllIngredientsListAsync();
         Task<List<string>> GetAllNutrientsListAsync();
         Task<int> SaveChangesAsync();

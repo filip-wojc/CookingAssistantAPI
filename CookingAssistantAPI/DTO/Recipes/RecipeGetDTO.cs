@@ -10,7 +10,6 @@ namespace CookingAssistantAPI.DTO.Recipes
         public string Name { get; set; }
         public string Description { get; set; }
         public string AuthorName { get; set; }
-        public byte[] ImageData { get; set; }
         public float Ratings { get; set; }
         public int TimeInMinutes { get; set; }
         public int Serves { get; set; }

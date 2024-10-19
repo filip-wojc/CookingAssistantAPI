@@ -159,7 +159,16 @@ namespace CookingAssistantAPI.Repositories.Recipes
             return result > 0;
         }
 
-        
+        public async Task<byte[]?> GetRecipeImageAsync(int recipeId)
+        {
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
+            if (recipe == null)
+            {
+                throw new NotFoundException("Recipe not found");
+            }
+
+            return recipe.ImageData;
+        }
     }
 
 }
