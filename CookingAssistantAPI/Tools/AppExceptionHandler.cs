@@ -12,6 +12,7 @@ namespace CookingAssistantAPI.Tools
             {
                 NotFoundException ex => (ex.Code, ex.Message),
                 BadRequestException ex => (ex.Code, ex.Message),
+                ForbidException ex => (ex.Code, ex.Message),
                 _ => default
             };
 

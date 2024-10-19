@@ -92,6 +92,18 @@ namespace CookingAssistantAPI.Repositories.Recipes
             return recipe;
         }
 
+        public async Task<List<Recipe>> GetAllRecipesAsync()
+        {
+            var recipes = await _context.Recipes.Include(r => r.Category)
+                .Include(r => r.CreatedBy)
+                .Include(r => r.Steps)
+                .Include(r => r.RecipeIngredients)
+                    .ThenInclude(ri => ri.Ingredient)
+                .Include(r => r.RecipeNutrients)
+                    .ThenInclude(rn => rn.Nutrient).ToListAsync();
+            return recipes;
+        }
+
         public async Task<List<string>> GetAllIngredientsListAsync()
         {
 
@@ -127,9 +139,7 @@ namespace CookingAssistantAPI.Repositories.Recipes
             return await _context.SaveChangesAsync();
         }
 
-        // USER VALIDATION BEFORE REMOVING RECIPE
-        /*
-        public async Task<bool> DeleteRecipeByIdAsync(int recipeId, int userId)
+        public async Task<bool> DeleteRecipeByIdAsync(int recipeId, int? userId)
         {
             var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
 
@@ -138,12 +148,18 @@ namespace CookingAssistantAPI.Repositories.Recipes
                 throw new NotFoundException("Recipe to delete not found");
             }
 
+            if(recipe.CreatedById != userId)
+            {
+                throw new ForbidException("You can't delete a recipe which was not added by you");
+            }
+
             _context.Recipes.Remove(recipe);
             var result = await _context.SaveChangesAsync();
 
             return result > 0;
         }
-        */
+
+        
     }
 
 }
