@@ -13,8 +13,9 @@ namespace CookingAssistantAPI.Tools.Validators
 
             RuleFor(r => r).Must(HaveSameListSize)
                 .WithMessage("Ingredients or nutrients invalid data");
-            RuleFor(r => r.CategoryId).Must(CategoryExists);
+            RuleFor(r => r.CategoryId).Must(CategoryExists).WithMessage("This categorry does not exist");
             RuleFor(r => r.ImageData).NotEmpty();
+            RuleFor(r => r.Difficulty).Must(CorrectDifficulty).WithMessage("Difficulty must be: easy, medium or hard");
         }
 
         private bool HaveSameListSize(RecipeCreateDTO dto)
@@ -32,6 +33,17 @@ namespace CookingAssistantAPI.Tools.Validators
         {
             return _context.Categories.FirstOrDefault(c => c.Id == categoryId) != null;
 
+        }
+
+        private bool CorrectDifficulty(string difficulty)
+        {
+            var correctDifficulties = new[] { "easy", "medium", "hard" };
+
+            if (correctDifficulties.Contains(difficulty.ToLower()))
+            {
+                return true;
+            }
+            return false;
         }
 
         /*

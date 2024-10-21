@@ -9,7 +9,7 @@ namespace CookingAssistantAPI.DTO.Recipes
         public string? Description { get; set; }
         public IFormFile? ImageData { get; set; }
         public int Serves { get; set; }
-        public string? Difficulty { get; set; }
+        public string Difficulty { get; set; }
         public int? TimeInMinutes { get; set; }
         public int CategoryId { get; set; }
         public List<string>? IngredientNames { get; set; }

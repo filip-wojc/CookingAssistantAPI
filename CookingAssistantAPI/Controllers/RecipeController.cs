@@ -8,6 +8,7 @@ using CookingAssistantAPI.DTO.Recipes;
 using Microsoft.AspNetCore.Authorization;
 using CookingAssistantAPI.DTO.Reviews;
 using CookingAssistantAPI.Services.ReviewServices;
+using CookingAssistantAPI.Tools;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -55,9 +56,9 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<RecipeSimpleGetDTO>>> GetAllRecipes()
+        public async Task<ActionResult<List<RecipeSimpleGetDTO>>> GetAllRecipes([FromQuery] RecipeQuery query)
         {
-            var recipes = await _service.GetAllRecipesAsync();
+            var recipes = await _service.GetAllRecipesAsync(query);
             return Ok(recipes);
         }
 

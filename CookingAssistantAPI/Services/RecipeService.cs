@@ -5,7 +5,9 @@ using CookingAssistantAPI.Exceptions;
 using CookingAssistantAPI.Repositories;
 using CookingAssistantAPI.Repositories.Recipes;
 using CookingAssistantAPI.Services.UserServices;
+using CookingAssistantAPI.Tools;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CookingAssistantAPI.Services
 {
@@ -14,11 +16,14 @@ namespace CookingAssistantAPI.Services
         private readonly IRepositoryRecipe _repository;
         private readonly IMapper _mapper;
         private readonly IUserContextService _userContext;
-        public RecipeService(IRepositoryRecipe repository, IMapper mapper, IUserContextService userContext)
+        private readonly IRecipeQueryService _recipeQueryService;
+        public RecipeService(IRepositoryRecipe repository, IMapper mapper,
+            IUserContextService userContext, IRecipeQueryService recipeQueryService)
         {
             _repository = repository;
             _mapper = mapper;
             _userContext = userContext;
+            _recipeQueryService = recipeQueryService;
         }
         public async Task<bool> AddRecipe(RecipeCreateDTO recipeDto)
         {
@@ -73,10 +78,19 @@ namespace CookingAssistantAPI.Services
             return await _repository.GetAllNutrientsListAsync();
         }
 
-        public async Task<List<RecipeSimpleGetDTO>> GetAllRecipesAsync()
+        public async Task<List<RecipeSimpleGetDTO>> GetAllRecipesAsync(RecipeQuery query)
         {
             var recipes = await _repository.GetAllRecipesAsync();
-            return _mapper.Map<List<RecipeSimpleGetDTO>>(recipes);
+
+
+            var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes);
+
+            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase);
+            recipeDtos = _recipeQueryService.SortRecipes(ref recipeDtos, query.SortBy, query.SortDirection);
+            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty);
+
+            return recipeDtos;
+
         }
 
         public async Task<List<RecipeNamesGetDTO>> GetAllRecipesNamesAsync()

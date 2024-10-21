@@ -7,7 +7,7 @@
         public string Description { get; set; }
         public float Ratings { get; set; }
         public int TimeInMinutes { get; set; }
-        public string? Difficulty { get; set; }
+        public string Difficulty { get; set; }
         public int VoteCount { get; set; }
         public string CategoryName { get; set; }
     }

@@ -27,6 +27,7 @@ namespace CookingAssistantAPI
             {
                 o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 o.JsonSerializerOptions.WriteIndented = true;
+                o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
 

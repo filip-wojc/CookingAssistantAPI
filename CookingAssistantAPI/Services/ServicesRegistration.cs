@@ -12,6 +12,7 @@ namespace CookingAssistantAPI.Services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IRecipeQueryService, RecipeQueryService>();
         }
     }
 }
