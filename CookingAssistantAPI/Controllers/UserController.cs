@@ -49,16 +49,8 @@ namespace CookingAssistantAPI.Controllers
             }
             return BadRequest();
         }
-        /*
-        [HttpPost]
-        [Route("login")]
-        public async Task<ActionResult> LogIn(UserRegisterDTO user)
-        {
 
-        }
-        */
-
-        // public async DeleteUser
+        // public async DeleteAccount
         // public async ChangeRole
 
 
