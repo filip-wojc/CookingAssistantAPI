@@ -1,4 +1,6 @@
-﻿using CookingAssistantAPI.Database.Models;
+﻿using AutoMapper;
+using CookingAssistantAPI.Database.Models;
+using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.DTO.Users;
 using CookingAssistantAPI.Exceptions;
 using CookingAssistantAPI.Repositories.Users;
@@ -17,13 +19,17 @@ namespace CookingAssistantAPI.Services.UserServices
         private readonly IUserContextService _userContext;
         private readonly IPasswordHasher<User> _hasher;
         private readonly JwtParameters _jwtParameters;
+        private readonly IRecipeQueryService _recipeQueryService;
+        private readonly IMapper _mapper;
         public UserService(IRepositoryUser repository, IPasswordHasher<User> hasher,
-            JwtParameters jwtParameters, IUserContextService userContext)
+            JwtParameters jwtParameters, IUserContextService userContext, IRecipeQueryService recipeQueryService, IMapper mapper)
         {
             _hasher = hasher;
             _repository = repository;
             _jwtParameters = jwtParameters;
             _userContext = userContext;
+            _recipeQueryService = recipeQueryService;
+            _mapper = mapper;
         }
 
         public async Task<bool> RegisterUser(UserRegisterDTO dto)
@@ -80,6 +86,18 @@ namespace CookingAssistantAPI.Services.UserServices
                 return true;
             }
             return false;
+        }
+
+        public async Task<List<RecipeSimpleGetDTO>> GetFavouriteRecipesAsync(RecipeQuery query)
+        {
+            var recipes = await _repository.GetFavouriteRecipesAsync(_userContext.UserId);
+            var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes);
+
+            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase);
+            recipeDtos = _recipeQueryService.SortRecipes(ref recipeDtos, query.SortBy, query.SortDirection);
+            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty);
+
+            return recipeDtos;
         }
 
         // ADD USER ACCOUNT DELETE REQUEST VALIDATION HERE

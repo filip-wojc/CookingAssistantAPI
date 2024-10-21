@@ -1,5 +1,6 @@
 ﻿using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Database.Models;
+using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +42,16 @@ namespace CookingAssistantAPI.Repositories.Users
                 return true;
             }
             return false;
+        }
+
+        public async Task<List<Recipe>> GetFavouriteRecipesAsync(int? userId)
+        {
+            var user = await _context.Users.Include(u => u.FavouriteRecipes).ThenInclude(r => r.Category).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
+            {
+                throw new NotFoundException("User not found");
+            }
+            return user.FavouriteRecipes.ToList();
         }
 
         public async Task<User> GetUserByEmailAsync(string email)

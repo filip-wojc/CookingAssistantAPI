@@ -4,6 +4,8 @@ using CookingAssistantAPI.DTO.Users;
 using CookingAssistantAPI.Repositories;
 using CookingAssistantAPI.Services.UserServices;
 using Microsoft.AspNetCore.Authorization;
+using CookingAssistantAPI.DTO.Recipes;
+using CookingAssistantAPI.Tools;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -48,6 +50,14 @@ namespace CookingAssistantAPI.Controllers
                 return Created();
             }
             return BadRequest();
+        }
+
+        [HttpGet("favourite-recipes")]
+        [Authorize]
+        public async Task<ActionResult<List<RecipeSimpleGetDTO>>> GetFavouriteRecipes([FromQuery] RecipeQuery query)
+        {
+            var favouriteRecipes = await _service.GetFavouriteRecipesAsync(query);
+            return Ok(favouriteRecipes);
         }
 
         // public async DeleteAccount

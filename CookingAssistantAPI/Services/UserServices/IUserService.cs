@@ -1,4 +1,6 @@
-﻿using CookingAssistantAPI.DTO.Users;
+﻿using CookingAssistantAPI.DTO.Recipes;
+using CookingAssistantAPI.DTO.Users;
+using CookingAssistantAPI.Tools;
 
 namespace CookingAssistantAPI.Services.UserServices
 {
@@ -7,5 +9,6 @@ namespace CookingAssistantAPI.Services.UserServices
         Task<bool> RegisterUser(UserRegisterDTO dto);
         Task<string> GenerateToken(UserLoginDTO dto);
         Task<bool> AddRecipeToFavourites(int recipeId);
+        Task<List<RecipeSimpleGetDTO>> GetFavouriteRecipesAsync(RecipeQuery query);
     }
 }

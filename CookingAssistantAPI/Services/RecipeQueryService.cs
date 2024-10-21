@@ -1,7 +1,6 @@
 ﻿using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.Exceptions;
 using CookingAssistantAPI.Tools;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CookingAssistantAPI.Services
 {
