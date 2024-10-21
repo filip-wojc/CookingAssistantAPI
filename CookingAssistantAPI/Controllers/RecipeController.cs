@@ -61,6 +61,13 @@ namespace CookingAssistantAPI.Controllers
             return Ok(recipes);
         }
 
+        [HttpGet("names")]
+        public async Task<ActionResult<List<RecipeNamesGetDTO>>> GetAllRecipesNames()
+        {
+            var recipes = await _service.GetAllRecipesNamesAsync();
+            return Ok(recipes);
+        }
+
         [HttpGet("image/{recipeId}")]
         public async Task<ActionResult<byte[]>> GetRecipeImage([FromRoute] int recipeId)
         {
