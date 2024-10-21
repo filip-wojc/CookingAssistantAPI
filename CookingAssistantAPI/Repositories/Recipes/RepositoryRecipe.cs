@@ -95,12 +95,7 @@ namespace CookingAssistantAPI.Repositories.Recipes
         public async Task<List<Recipe>> GetAllRecipesAsync()
         {
             var recipes = await _context.Recipes.Include(r => r.Category)
-                .Include(r => r.CreatedBy)
-                .Include(r => r.Steps)
-                .Include(r => r.RecipeIngredients)
-                    .ThenInclude(ri => ri.Ingredient)
-                .Include(r => r.RecipeNutrients)
-                    .ThenInclude(rn => rn.Nutrient).ToListAsync();
+                .Include(r => r.CreatedBy).ToListAsync();
             return recipes;
         }
 

@@ -29,6 +29,9 @@ namespace CookingAssistantAPI.Tools
                 .ForMember(r => r.Nutrients, o => o.MapFrom(src => src.RecipeNutrients))
                 .ForMember(r => r.Steps, o => o.MapFrom(src => src.Steps));
 
+            CreateMap<Recipe, RecipeSimpleGetDTO>()
+                .ForMember(r => r.CategoryName, o => o.MapFrom(src => src.CreatedBy.UserName));
+
 
             CreateMap<RecipeCreateDTO, Recipe>()
                 //.ForMember(dest => dest.ImageData, o => o.MapFrom(src => src.ImageData))

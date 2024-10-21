@@ -55,7 +55,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<RecipeGetDTO>>> GetAllRecipes()
+        public async Task<ActionResult<List<RecipeSimpleGetDTO>>> GetAllRecipes()
         {
             var recipes = await _service.GetAllRecipesAsync();
             return Ok(recipes);

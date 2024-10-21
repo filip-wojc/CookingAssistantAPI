@@ -73,10 +73,10 @@ namespace CookingAssistantAPI.Services
             return await _repository.GetAllNutrientsListAsync();
         }
 
-        public async Task<List<RecipeGetDTO>> GetAllRecipesAsync()
+        public async Task<List<RecipeSimpleGetDTO>> GetAllRecipesAsync()
         {
             var recipes = await _repository.GetAllRecipesAsync();
-            return _mapper.Map<List<RecipeGetDTO>>(recipes);
+            return _mapper.Map<List<RecipeSimpleGetDTO>>(recipes);
         }
 
         public async Task<RecipeGetDTO> GetRecipeByIdAsync(int recipeId)
