@@ -60,6 +60,7 @@ namespace CookingAssistantAPI.Controllers
             return Ok(favouriteRecipes);
         }
 
+        // public async AddProfilePicture
         // public async DeleteAccount
         // public async ChangeRole
 

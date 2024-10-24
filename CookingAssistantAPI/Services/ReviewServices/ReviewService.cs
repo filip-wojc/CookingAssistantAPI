@@ -19,19 +19,44 @@ namespace CookingAssistantAPI.Services.ReviewServices
             _userContext = userContext;
         }
         
-        public async Task<bool> AddReviewAsync(ReviewCreateDTO dto, int recipeId)
+        public async Task<bool> AddReviewAsync(int recipeId, ReviewCreateDTO dto)
         {
             var review = _mapper.Map<Review>(dto);
             review.RatedRecipeId = recipeId;
             review.ReviewAuthorId = _userContext.UserId;
 
-            await _repository.AddReviewAsync(review, recipeId);
+            await _repository.AddReviewAsync(recipeId, review);
             if (await _repository.SaveChangesAsync() > 0)
             {
                 return true;
             }
             return false;
         }
-        
+
+        public async Task<bool> ModifyReviewAsync(int recipeId, ReviewCreateDTO dto)
+        {
+            var review = _mapper.Map<Review>(dto);
+            await _repository.ModifyReviewAsync(recipeId, review);
+            if (await _repository.SaveChangesAsync() > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<ReviewGetDTO> GetUserReview(int recipeId)
+        {
+            var review = await _repository.GetUserReview(recipeId);
+
+            return _mapper.Map<ReviewGetDTO>(review);
+        }
+        /*
+        public async Task<List<ReviewGetDTO>> GetReviewsAsync(int recipeId, int? limit = null)
+        {
+            var reviews = await _repository.GetReviewsAsync(recipeId, limit);
+
+            return _mapper.Map<List<ReviewGetDTO>>(reviews);
+        }
+        */
     }
 }

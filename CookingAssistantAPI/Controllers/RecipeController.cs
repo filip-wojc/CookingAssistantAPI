@@ -27,7 +27,7 @@ namespace CookingAssistantAPI.Controllers
 
         [HttpPost]
         [Authorize]
-        //[Consumes("multipart/form-data")]
+        [Consumes("multipart/form-data")]
         public async Task<ActionResult> CreateRecipe([FromForm] RecipeCreateDTO recipeDto)
         {
             if (await _service.AddRecipe(recipeDto))
@@ -94,11 +94,36 @@ namespace CookingAssistantAPI.Controllers
         [Authorize]
         public async Task<ActionResult> CreateReview([FromRoute] int recipeId, ReviewCreateDTO dto)
         {
-            if (await _reviewService.AddReviewAsync(dto, recipeId))
+            if (await _reviewService.AddReviewAsync(recipeId, dto))
             {
                 return Created();
             }
             return BadRequest();
         }
+        
+        [HttpPost("{recipeId}/review/modify")]
+        [Authorize]
+        public async Task<ActionResult> ModifyReview([FromRoute] int recipeId, [FromBody] ReviewCreateDTO dto)
+        {
+            if (await _reviewService.ModifyReviewAsync(recipeId, dto))
+            {
+                return Created();
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("{recipeId}/review")]
+        [Authorize]
+        public async Task<ActionResult<ReviewGetDTO>> GetUserReview([FromRoute] int recipeId)
+        {
+            var review = await _reviewService.GetUserReview(recipeId);
+            if (review != null)
+            {
+                return Ok(review);
+            }
+            return NotFound();
+        }
+
+
     }
 }

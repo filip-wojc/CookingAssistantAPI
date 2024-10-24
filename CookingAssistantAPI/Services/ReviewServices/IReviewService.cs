@@ -1,9 +1,13 @@
-﻿using CookingAssistantAPI.DTO.Reviews;
+﻿using CookingAssistantAPI.Database.Models;
+using CookingAssistantAPI.DTO.Reviews;
 
 namespace CookingAssistantAPI.Services.ReviewServices
 {
     public interface IReviewService
     {
-        Task<bool> AddReviewAsync(ReviewCreateDTO dto, int recipeId);
+        Task<bool> AddReviewAsync(int recipeId, ReviewCreateDTO dto);
+        Task<bool> ModifyReviewAsync(int recipeId, ReviewCreateDTO dto);
+        Task<ReviewGetDTO> GetUserReview(int recipeId);
+        // Task<List<ReviewGetDTO>> GetReviewsAsync(int recipeId, int? limit = null);
     }
 }
