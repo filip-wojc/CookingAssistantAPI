@@ -59,31 +59,14 @@ namespace CookingAssistantAPI.Repositories.Reviews
             return review;
         }
         
-        /*
-        // get limit number of reviews for a recipe, if not specified get all reviews
-        public async Task<List<Review>> GetReviewsAsync(int recipeId, int? limit = null)
+        
+        public async Task<List<Review>> GetReviewsAsync(int recipeId)
         {
             var recipe = await GetRecipeById(recipeId);
-
-            // If limit is specified, ensure it doesn't exceed the total review count
-            if (limit.HasValue && limit.Value > 0)
-            {
-                var totalReviews = recipe.UsersReviews.Count;
-
-                // If the limit is greater than available reviews, return all reviews
-                if (limit.Value > totalReviews)
-                {
-                    return recipe.UsersReviews.ToList();
-                }
-
-                // Otherwise, return the limited number of reviews
-                return recipe.UsersReviews.Take(limit.Value).ToList();
-            }
 
             // If no limit is specified, return all reviews
             return recipe.UsersReviews.ToList();
         }
-        */
         
 
         private async Task<Review> GetReviewById(int reviewId)
@@ -109,10 +92,26 @@ namespace CookingAssistantAPI.Repositories.Reviews
             }
             return recipe;
         }
+        public async Task<byte[]> GetProfilePictureAsync(int reviewId)
+        {
+            var review = await _context.Reviews.Include(r => r.ReviewAuthor).FirstOrDefaultAsync(r => r.Id == reviewId);
+            if (review is null)
+            {
+                throw new NotFoundException("Review not found");
+            }
+            var profilePic = review.ReviewAuthor!.ProfilePictureImageData;
+            if (profilePic is null)
+            {
+                throw new NotFoundException("Profile picture for review not found");
+            }
+            return profilePic;
+        }
 
         public async Task<int> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync();
         }
+
+        
     }
 }

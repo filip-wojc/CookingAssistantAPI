@@ -3,13 +3,13 @@ using CookingAssistantAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Newtonsoft.Json;
-using CookingAssistantAPI.Services;
 using CookingAssistantAPI.DTO.Recipes;
 using Microsoft.AspNetCore.Authorization;
 using CookingAssistantAPI.DTO.Reviews;
 using CookingAssistantAPI.Services.ReviewServices;
 using CookingAssistantAPI.Tools;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using CookingAssistantAPI.Services.RecipeServices;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -20,8 +20,8 @@ namespace CookingAssistantAPI.Controllers
     public class RecipeController : ControllerBase
     {
         private readonly IRecipeService _service;
-        private readonly IPaginationService _paginationService;
-        public RecipeController(IRecipeService service, IReviewService reviewService, IPaginationService paginationService)
+        private readonly IRecipePaginationService _paginationService;
+        public RecipeController(IRecipeService service, IReviewService reviewService, IRecipePaginationService paginationService)
         {
             _service = service;
             _paginationService = paginationService;
@@ -89,6 +89,8 @@ namespace CookingAssistantAPI.Controllers
             var ingredients = await _service.GetAllIngredientsAsync();
             return Ok(ingredients);
         }
+
+        // public async ModifyRecipe
 
     }
 }

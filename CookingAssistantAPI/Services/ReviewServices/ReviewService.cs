@@ -4,6 +4,7 @@ using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO.Reviews;
 using CookingAssistantAPI.Repositories.Reviews;
 using CookingAssistantAPI.Services.UserServices;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CookingAssistantAPI.Services.ReviewServices
 {
@@ -50,13 +51,18 @@ namespace CookingAssistantAPI.Services.ReviewServices
 
             return _mapper.Map<ReviewGetDTO>(review);
         }
-        /*
-        public async Task<List<ReviewGetDTO>> GetReviewsAsync(int recipeId, int? limit = null)
+        
+        public async Task<List<ReviewGetDTO>> GetReviewsAsync(int recipeId)
         {
-            var reviews = await _repository.GetReviewsAsync(recipeId, limit);
+            var reviews = await _repository.GetReviewsAsync(recipeId);
 
             return _mapper.Map<List<ReviewGetDTO>>(reviews);
         }
-        */
+
+        public async Task<byte[]> GetProfilePictureAsync(int reviewId)
+        {
+            var profilePic = await _repository.GetProfilePictureAsync(reviewId);
+            return profilePic;
+        }
     }
 }

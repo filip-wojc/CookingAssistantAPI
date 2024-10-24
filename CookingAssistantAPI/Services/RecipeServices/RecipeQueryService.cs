@@ -2,7 +2,7 @@
 using CookingAssistantAPI.Exceptions;
 using CookingAssistantAPI.Tools;
 
-namespace CookingAssistantAPI.Services
+namespace CookingAssistantAPI.Services.RecipeServices
 {
     public class RecipeQueryService : IRecipeQueryService
     {
@@ -80,7 +80,7 @@ namespace CookingAssistantAPI.Services
         public List<RecipeSimpleGetDTO> RecipeFilter(ref List<RecipeSimpleGetDTO> recipeDtos, string? categoryName, string? difficulty)
         {
             if (difficulty != null)
-            {   
+            {
                 recipeDtos = recipeDtos.Where(r => r.Difficulty.ToLower() == difficulty.ToLower()).ToList();
                 if (!recipeDtos.Any())
                 {
@@ -95,10 +95,10 @@ namespace CookingAssistantAPI.Services
                 {
                     throw new BadRequestException("No recipe found with given category");
                 }
-            }  
+            }
             return recipeDtos;
 
         }
-        
+
     }
 }

@@ -8,6 +8,7 @@ namespace CookingAssistantAPI.Services.ReviewServices
         Task<bool> AddReviewAsync(int recipeId, ReviewCreateDTO dto);
         Task<bool> ModifyReviewAsync(int recipeId, ReviewCreateDTO dto);
         Task<ReviewGetDTO> GetUserReview(int recipeId);
-        // Task<List<ReviewGetDTO>> GetReviewsAsync(int recipeId, int? limit = null);
+        Task<List<ReviewGetDTO>> GetReviewsAsync(int recipeId);
+        Task<byte[]> GetProfilePictureAsync(int reviewId);
     }
 }

@@ -43,9 +43,7 @@ namespace CookingAssistantAPI.Tools
             CreateMap<ReviewCreateDTO, Review>();
 
             CreateMap<Review, ReviewGetDTO>()
-                .ForMember(dest => dest.ReviewAuthor, opt => opt.MapFrom(src => src.ReviewAuthor.UserName))
-                .ForMember(dest => dest.ReviewAuthorProfilePicture, opt => opt.MapFrom(src => src.ReviewAuthor.ProfilePictureImageData));
-
+                .ForMember(dest => dest.ReviewAuthor, opt => opt.MapFrom(src => src.ReviewAuthor.UserName));
 
         }
 

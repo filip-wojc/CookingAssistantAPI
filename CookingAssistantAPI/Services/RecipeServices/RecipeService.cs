@@ -9,7 +9,7 @@ using CookingAssistantAPI.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-namespace CookingAssistantAPI.Services
+namespace CookingAssistantAPI.Services.RecipeServices
 {
     public class RecipeService : IRecipeService
     {
@@ -61,7 +61,7 @@ namespace CookingAssistantAPI.Services
 
         public async Task<bool> DeleteRecipeByIdAsync(int recipeId)
         {
-            if(await _repository.DeleteRecipeByIdAsync(recipeId, _userContext.UserId))
+            if (await _repository.DeleteRecipeByIdAsync(recipeId, _userContext.UserId))
             {
                 return true;
             }

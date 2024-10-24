@@ -72,7 +72,8 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
         // public async DeleteAccount
-        // public async ChangeRole
+        // public async ModifyProfile {ProfilePic, UserName}
+        // public async DeleteRecipeFromFavourites
 
 
     }

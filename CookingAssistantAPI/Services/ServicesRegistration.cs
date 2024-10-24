@@ -1,4 +1,5 @@
-﻿using CookingAssistantAPI.Services.ReviewServices;
+﻿using CookingAssistantAPI.Services.RecipeServices;
+using CookingAssistantAPI.Services.ReviewServices;
 using CookingAssistantAPI.Services.UserServices;
 using CookingAssistantAPI.Tools;
 
@@ -13,7 +14,7 @@ namespace CookingAssistantAPI.Services
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IRecipeQueryService, RecipeQueryService>();
-            services.AddScoped<IPaginationService, RecipePaginationService>();
+            services.AddScoped<IRecipePaginationService, RecipePaginationService>();
         }
     }
 }

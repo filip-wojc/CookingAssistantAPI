@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace CookingAssistantAPI.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("api/reviews")]
     public class ReviewController : ControllerBase
     {
@@ -39,7 +38,7 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
-        [HttpGet("{recipeId}")]
+        [HttpGet("{recipeId}/my-review")]
         public async Task<ActionResult<ReviewGetDTO>> GetUserReview([FromRoute] int recipeId)
         {
             var review = await _service.GetUserReview(recipeId);
@@ -49,5 +48,19 @@ namespace CookingAssistantAPI.Controllers
             }
             return NotFound();
         }
+
+        [HttpGet("{recipeId}")]
+        public async Task<ActionResult<List<ReviewGetDTO>>> GetRecipeReviews([FromRoute] int recipeId)
+        {
+            var reviews = await _service.GetReviewsAsync(recipeId);
+            return Ok(reviews);
+        }
+
+        [HttpGet("{reviewId}/image")]
+        public async Task<ActionResult<byte[]>> GetReviewImage([FromRoute] int reviewId)
+        {
+            var imageData = await _service.GetProfilePictureAsync(reviewId);
+            return File(imageData, "image/jpeg");
+        } 
     }
 }

@@ -3,9 +3,9 @@ using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.Tools;
 using System.Linq;
 
-namespace CookingAssistantAPI.Services
+namespace CookingAssistantAPI.Services.RecipeServices
 {
-    public class RecipePaginationService : IPaginationService
+    public class RecipePaginationService : IRecipePaginationService
     {
         public PageResult<RecipeSimpleGetDTO> GetPaginatedResult(RecipeQuery query, IEnumerable<RecipeSimpleGetDTO> allEntities)
         {

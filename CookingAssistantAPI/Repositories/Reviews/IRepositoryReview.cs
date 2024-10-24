@@ -7,8 +7,8 @@ namespace CookingAssistantAPI.Repositories.Reviews
         Task AddReviewAsync(int recipeId, Review review);
         Task ModifyReviewAsync(int recipeId, Review updatedReview);
         Task<Review> GetUserReview(int recipeId);
-        //Task<List<Review>> GetReviewsAsync(int recipeId, int? limit = null);
-
+        Task<byte[]> GetProfilePictureAsync(int reviewId);
+        Task<List<Review>> GetReviewsAsync(int recipeId);
         Task<int> SaveChangesAsync();
     }
 }
