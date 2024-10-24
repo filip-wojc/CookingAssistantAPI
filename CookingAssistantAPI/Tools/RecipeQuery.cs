@@ -27,5 +27,7 @@ namespace CookingAssistantAPI.Tools
         public SortDirection? SortDirection { get; set; }
         public string? FilterByDifficulty { get; set; }
         public string? FilterByCategoryName { get; set; }
+        public int? PageNumber { get; set; }
+        public int? PageSize { get; set; }
     }
 }

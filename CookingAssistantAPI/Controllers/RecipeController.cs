@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using CookingAssistantAPI.DTO.Reviews;
 using CookingAssistantAPI.Services.ReviewServices;
 using CookingAssistantAPI.Tools;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -19,10 +20,12 @@ namespace CookingAssistantAPI.Controllers
     {
         private readonly IRecipeService _service;
         private readonly IReviewService _reviewService;
-        public RecipeController(IRecipeService service, IReviewService reviewService)
+        private readonly IPaginationService _paginationService;
+        public RecipeController(IRecipeService service, IReviewService reviewService, IPaginationService paginationService)
         {
             _service = service;
             _reviewService = reviewService;
+            _paginationService = paginationService;
         }
 
         [HttpPost]
@@ -56,10 +59,11 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<RecipeSimpleGetDTO>>> GetAllRecipes([FromQuery] RecipeQuery query)
+        public async Task<ActionResult<PageResult<RecipeSimpleGetDTO>>> GetAllRecipes([FromQuery] RecipeQuery query)
         {
             var recipes = await _service.GetAllRecipesAsync(query);
-            return Ok(recipes);
+            var pageResult = _paginationService.GetPaginatedResult(query, recipes);
+            return Ok(pageResult);
         }
 
         [HttpGet("names")]
