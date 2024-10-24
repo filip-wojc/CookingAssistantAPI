@@ -63,6 +63,23 @@ namespace CookingAssistantAPI.Repositories.Users
             }
             return user;
         }
+
+        public async Task<bool> UploadProfilePicture(int? userId, byte[] imageData)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            user.ProfilePictureImageData = imageData;
+            if(await _context.SaveChangesAsync() > 0)
+            {
+                return true;
+            }
+            return false;
+           
+        }
         // NEEDS TO BE VALIDATED BEFORE USING
         /*
         public async Task<bool> RemoveUserFromDbAsync(int userId)

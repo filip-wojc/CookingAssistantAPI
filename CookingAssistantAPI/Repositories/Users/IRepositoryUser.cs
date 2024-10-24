@@ -9,6 +9,7 @@ namespace CookingAssistantAPI.Repositories.Users
         Task<User> GetUserByEmailAsync(string email);
         Task<bool> AddRecipeToFavourites(int recipeId, int? userId);
         Task<List<Recipe>> GetFavouriteRecipesAsync(int? userId);
+        Task<bool> UploadProfilePicture(int? userId, byte[] imageData);
         // Task<bool> RemoveUserFromDbAsync(int userId); FIX BEFORE USING
     }
 }

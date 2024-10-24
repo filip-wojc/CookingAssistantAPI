@@ -20,12 +20,10 @@ namespace CookingAssistantAPI.Controllers
     public class RecipeController : ControllerBase
     {
         private readonly IRecipeService _service;
-        private readonly IReviewService _reviewService;
         private readonly IPaginationService _paginationService;
         public RecipeController(IRecipeService service, IReviewService reviewService, IPaginationService paginationService)
         {
             _service = service;
-            _reviewService = reviewService;
             _paginationService = paginationService;
         }
 

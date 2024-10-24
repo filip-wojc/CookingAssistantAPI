@@ -6,6 +6,7 @@ using CookingAssistantAPI.Services.UserServices;
 using Microsoft.AspNetCore.Authorization;
 using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.Tools;
+using CookingAssistantAPI.DTO;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -60,7 +61,16 @@ namespace CookingAssistantAPI.Controllers
             return Ok(favouriteRecipes);
         }
 
-        // public async AddProfilePicture
+        [HttpPost("image")]
+        [Authorize]
+        public async Task<ActionResult> AddProfilePicture([FromForm] UploadFileDTO profilePicture)
+        {
+            if (await _service.UploadProfilePicture(profilePicture))
+            {
+                return Created();
+            }
+            return BadRequest();
+        }
         // public async DeleteAccount
         // public async ChangeRole
 

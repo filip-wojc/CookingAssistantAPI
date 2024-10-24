@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CookingAssistantAPI.Database.Models;
+using CookingAssistantAPI.DTO;
 using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.DTO.Users;
 using CookingAssistantAPI.Exceptions;
@@ -98,6 +99,16 @@ namespace CookingAssistantAPI.Services.UserServices
             recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty);
 
             return recipeDtos;
+        }
+
+        public async Task<bool> UploadProfilePicture(UploadFileDTO profilePicture)
+        {
+            var profilePictureByteArray = _mapper.Map<byte[]>(profilePicture.formFile);
+            if (await _repository.UploadProfilePicture(_userContext.UserId, profilePictureByteArray))
+            {
+                return true;
+            }
+            return false;
         }
 
         // ADD USER ACCOUNT DELETE REQUEST VALIDATION HERE

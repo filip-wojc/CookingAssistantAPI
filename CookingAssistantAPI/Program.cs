@@ -79,6 +79,7 @@ namespace CookingAssistantAPI
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "HogwartsAPI", Version = "v1" });
+                c.OperationFilter<FileUploadOperationFilter>();
 
                 // Konfiguracja JWT w Swaggerze
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
