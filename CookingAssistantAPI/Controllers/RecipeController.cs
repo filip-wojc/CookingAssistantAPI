@@ -14,19 +14,17 @@ using CookingAssistantAPI.Tools;
 namespace CookingAssistantAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/recipes")]
     public class RecipeController : ControllerBase
     {
         private readonly IRecipeService _service;
-        private readonly IReviewService _reviewService;
-        public RecipeController(IRecipeService service, IReviewService reviewService)
+        public RecipeController(IRecipeService service)
         {
             _service = service;
-            _reviewService = reviewService;
         }
 
         [HttpPost]
-        [Authorize]
         [Consumes("multipart/form-data")]
         public async Task<ActionResult> CreateRecipe([FromForm] RecipeCreateDTO recipeDto)
         {
@@ -38,7 +36,6 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpDelete("{*recipeId}")]
-        [Authorize]
         public async Task<ActionResult> DeleteRecipe([FromRoute] int recipeId)
         {
             if (await _service.DeleteRecipeByIdAsync(recipeId))
@@ -77,7 +74,6 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("nutrientsList")]
-        [Authorize]
         public async Task<ActionResult<List<string>>> GetNutrientsList()
         {
             var nutrients = await _service.GetAllNutrientsAsync();
@@ -89,41 +85,6 @@ namespace CookingAssistantAPI.Controllers
             var ingredients = await _service.GetAllIngredientsAsync();
             return Ok(ingredients);
         }
-
-        [HttpPost("{recipeId}/review")]
-        [Authorize]
-        public async Task<ActionResult> CreateReview([FromRoute] int recipeId, ReviewCreateDTO dto)
-        {
-            if (await _reviewService.AddReviewAsync(recipeId, dto))
-            {
-                return Created();
-            }
-            return BadRequest();
-        }
-        
-        [HttpPost("{recipeId}/review/modify")]
-        [Authorize]
-        public async Task<ActionResult> ModifyReview([FromRoute] int recipeId, [FromBody] ReviewCreateDTO dto)
-        {
-            if (await _reviewService.ModifyReviewAsync(recipeId, dto))
-            {
-                return Created();
-            }
-            return BadRequest();
-        }
-
-        [HttpGet("{recipeId}/review")]
-        [Authorize]
-        public async Task<ActionResult<ReviewGetDTO>> GetUserReview([FromRoute] int recipeId)
-        {
-            var review = await _reviewService.GetUserReview(recipeId);
-            if (review != null)
-            {
-                return Ok(review);
-            }
-            return NotFound();
-        }
-
 
     }
 }
