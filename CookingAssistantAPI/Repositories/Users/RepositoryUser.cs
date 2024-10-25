@@ -64,6 +64,28 @@ namespace CookingAssistantAPI.Repositories.Users
             return user;
         }
 
+        public async Task<bool> RemoveRecipeFromFavouritesAsync(int?userId, int recipeId)
+        {
+            var user = await _context.Users.Include(u => u.FavouriteRecipes).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
+            if (recipe == null)
+            {
+                throw new NotFoundException("Recipe not found");
+            }
+            if (!user.FavouriteRecipes.Contains(recipe))
+            {
+                throw new BadRequestException("This recipe is not in your favourite recipes list");
+            }
+            user.FavouriteRecipes.Remove(recipe);
+            var result = await _context.SaveChangesAsync();
+
+            return result > 0;
+        }
+
         public async Task<bool> RemoveUserFromDbAsync(int? userId, string userName)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);

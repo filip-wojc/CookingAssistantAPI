@@ -23,7 +23,7 @@ namespace CookingAssistantAPI.Controllers
             _service = service;
             _paginationService = paginationService;
         }
-        
+
         [HttpPost]
         [Route("register")]
         public async Task<ActionResult> RegisterUser([FromBody] UserRegisterDTO user)
@@ -77,6 +77,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpDelete("delete/{userName}")]
+        [Authorize]
         public async Task<ActionResult> DeleteUser([FromRoute] string userName)
         {
             if (await _service.DeleteUserAsync(userName))
@@ -86,7 +87,17 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
+        [HttpDelete("favourite-recipes/delete/{recipeId}")]
+        [Authorize]
+        public async Task<ActionResult> RemoveRecipeFromFavourites([FromRoute] int recipeId)
+        {
+            if (await _service.RemoveRecipeFromFavouritesAsync(recipeId))
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+
         // public async ModifyProfile {ProfilePic, UserName}
-        // public async DeleteRecipeFromFavourites
     }
 }

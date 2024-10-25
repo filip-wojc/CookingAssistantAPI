@@ -13,5 +13,6 @@ namespace CookingAssistantAPI.Services.UserServices
         Task<List<RecipeSimpleGetDTO>> GetFavouriteRecipesAsync(RecipeQuery query);
         Task<bool> UploadProfilePicture(UploadFileDTO profilePicture);
         Task<bool> DeleteUserAsync(string userName);
+        Task<bool> RemoveRecipeFromFavouritesAsync(int recipeId);
     }
 }

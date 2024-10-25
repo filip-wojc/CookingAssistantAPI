@@ -121,5 +121,13 @@ namespace CookingAssistantAPI.Services.UserServices
             return false;
         }
 
+        public async Task<bool> RemoveRecipeFromFavouritesAsync(int recipeId)
+        {
+            if (await _repository.RemoveRecipeFromFavouritesAsync(_userContext.UserId, recipeId))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
