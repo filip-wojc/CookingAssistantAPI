@@ -75,10 +75,18 @@ namespace CookingAssistantAPI.Controllers
             }
             return BadRequest();
         }
-        // public async DeleteAccount
+
+        [HttpDelete("delete/{userName}")]
+        public async Task<ActionResult> DeleteUser([FromRoute] string userName)
+        {
+            if (await _service.DeleteUserAsync(userName))
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+
         // public async ModifyProfile {ProfilePic, UserName}
         // public async DeleteRecipeFromFavourites
-
-
     }
 }

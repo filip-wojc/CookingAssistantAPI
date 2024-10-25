@@ -3,6 +3,7 @@ using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace CookingAssistantAPI.Repositories.Reviews
 {
@@ -20,11 +21,16 @@ namespace CookingAssistantAPI.Repositories.Reviews
            {
                 throw new BadRequestException("You can't add more than one review to the recipe");
            }
+           if (recipe.CreatedById == userId)
+           {
+                throw new ForbidException("You can't review your own recipe");
+           }
+           
            review.DateCreated = DateTime.UtcNow;
            _context.Reviews.Add(review);
 
-            recipe.Ratings = recipe.UsersReviews.Average(r => (double)r.Value);
-            recipe.VoteCount += 1;
+           recipe.Ratings = recipe.UsersReviews.Average(r => (double)r.Value);
+           recipe.VoteCount += 1;
         }
 
         public async Task ModifyReviewAsync(int recipeId, int? userId, Review updatedReview)

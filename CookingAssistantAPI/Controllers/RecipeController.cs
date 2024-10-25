@@ -28,7 +28,6 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpPost]
-        [Consumes("multipart/form-data")]
         public async Task<ActionResult> CreateRecipe([FromForm] RecipeCreateDTO recipeDto)
         {
             if (await _service.AddRecipe(recipeDto))

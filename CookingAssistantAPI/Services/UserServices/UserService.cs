@@ -112,16 +112,14 @@ namespace CookingAssistantAPI.Services.UserServices
             return false;
         }
 
-        // ADD USER ACCOUNT DELETE REQUEST VALIDATION HERE
-        /*
-        public async Task<bool> DeleteUser(int userId)
+        public async Task<bool> DeleteUserAsync(string userName)
         {
-            if (await _repository.RemoveUserFromDbAsync(userId))
+            if (await _repository.RemoveUserFromDbAsync(_userContext.UserId, userName))
             {
                 return true;
             }
             return false;
         }
-        */
+
     }
 }

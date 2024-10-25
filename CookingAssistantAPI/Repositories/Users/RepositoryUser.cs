@@ -64,6 +64,23 @@ namespace CookingAssistantAPI.Repositories.Users
             return user;
         }
 
+        public async Task<bool> RemoveUserFromDbAsync(int? userId, string userName)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                throw new NotFoundException("User to delete not found");
+            }
+            if (user.UserName != userName)
+            {
+                throw new ForbidException("Write your username before deleting an account");
+            }
+            var result = await _context.Users.Where(u => u.Id == userId).ExecuteDeleteAsync();
+
+            return result > 0;
+        }
+
         public async Task<bool> UploadProfilePicture(int? userId, byte[] imageData)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
@@ -80,22 +97,6 @@ namespace CookingAssistantAPI.Repositories.Users
             return false;
            
         }
-        // NEEDS TO BE VALIDATED BEFORE USING
-        /*
-        public async Task<bool> RemoveUserFromDbAsync(int userId)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (user == null)
-            {
-                throw new NotFoundException("User to delete not found");
-            }
-
-            _context.Users.Remove(user);
-            var result = await _context.SaveChangesAsync();
-
-            return result > 0;
-        }
-        */
+       
     }
 }

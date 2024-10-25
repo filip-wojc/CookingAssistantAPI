@@ -73,7 +73,13 @@ namespace CookingAssistantAPI.Database
             modelBuilder.Entity<User>()
                 .HasMany(u => u.CreatedRecipes)
                 .WithOne(r => r.CreatedBy)
-                .HasForeignKey(r => r.CreatedById);
+                .HasForeignKey(r => r.CreatedById).OnDelete(DeleteBehavior.Cascade);
+
+            // Many to one relationship User <--- Review
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Reviews)
+                .WithOne(r => r.ReviewAuthor)
+                .HasForeignKey(r => r.ReviewAuthorId).OnDelete(DeleteBehavior.Cascade);
 
             // Relacja wiele-do-wielu: Użytkownicy --- Ulubione przepisy
             modelBuilder.Entity<User>()
@@ -81,8 +87,8 @@ namespace CookingAssistantAPI.Database
                 .WithMany(r => r.UsersFavourite)
                 .UsingEntity<Dictionary<string, object>>(
                     "UserFavoriteRecipe", // nazwa tabeli pośredniej
-                    j => j.HasOne<Recipe>().WithMany().HasForeignKey("RecipeId"),
-                    j => j.HasOne<User>().WithMany().HasForeignKey("UserId")
+                    j => j.HasOne<Recipe>().WithMany().HasForeignKey("RecipeId").OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne<User>().WithMany().HasForeignKey("UserId").OnDelete(DeleteBehavior.Cascade)
                 );
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using CookingAssistantAPI.DTO.Recipes;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace CookingAssistantAPI.Tools
@@ -7,6 +8,12 @@ namespace CookingAssistantAPI.Tools
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
+            if (context.MethodInfo.GetParameters()
+            .Any(p => p.ParameterType == typeof(RecipeCreateDTO)))
+            {
+                return; // Pomijamy tę operację, aby schemat RecipeCreateDTO był generowany bez modyfikacji
+            }
+
             var fileParameters = context.ApiDescription.ParameterDescriptions
                 .Where(p => p.Type == typeof(IFormFile));
 
