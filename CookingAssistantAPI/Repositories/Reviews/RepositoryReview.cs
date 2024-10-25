@@ -2,7 +2,6 @@
 using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.Exceptions;
-using CookingAssistantAPI.Services.UserServices;
 using Microsoft.EntityFrameworkCore;
 
 namespace CookingAssistantAPI.Repositories.Reviews
@@ -10,16 +9,14 @@ namespace CookingAssistantAPI.Repositories.Reviews
     public class RepositoryReview : IRepositoryReview
     {
         private readonly CookingDbContext _context;
-        private readonly IUserContextService _userContext;
-        public RepositoryReview(CookingDbContext context, IUserContextService userContext)
+        public RepositoryReview(CookingDbContext context)
         {
             _context = context;
-            _userContext = userContext;
         }
-        public async Task AddReviewAsync(int recipeId, Review review)
+        public async Task AddReviewAsync(int recipeId, int? userId, Review review)
         {
            var recipe = await GetRecipeById(recipeId);
-           if (recipe.UsersReviews.Where(r => r.RatedRecipeId == recipeId && r.ReviewAuthorId == _userContext.UserId).Count() > 1)
+           if (recipe.UsersReviews.Where(r => r.RatedRecipeId == recipeId && r.ReviewAuthorId == userId).Count() >= 1)
            {
                 throw new BadRequestException("You can't add more than one review to the recipe");
            }
@@ -30,11 +27,11 @@ namespace CookingAssistantAPI.Repositories.Reviews
             recipe.VoteCount += 1;
         }
 
-        public async Task ModifyReviewAsync(int recipeId, Review updatedReview)
+        public async Task ModifyReviewAsync(int recipeId, int? userId, Review updatedReview)
         {
             var recipe = await GetRecipeById(recipeId);
 
-            var review = recipe.UsersReviews.FirstOrDefault(r => r.RatedRecipeId == recipeId && r.ReviewAuthorId == _userContext.UserId);
+            var review = recipe.UsersReviews.FirstOrDefault(r => r.RatedRecipeId == recipeId && r.ReviewAuthorId == userId);
 
             if (review == null)
             {
@@ -48,10 +45,10 @@ namespace CookingAssistantAPI.Repositories.Reviews
             _context.Reviews.Update(review);
         }
         // Fetch user's review fields
-        public async Task<Review> GetUserReview(int recipeId)
+        public async Task<Review> GetUserReview(int recipeId, int? userId)
         {
             var recipe = await GetRecipeById(recipeId);
-            var review = recipe.UsersReviews.FirstOrDefault(r => r.RatedRecipeId == recipeId && r.ReviewAuthorId == _userContext.UserId);
+            var review = recipe.UsersReviews.FirstOrDefault(r => r.RatedRecipeId == recipeId && r.ReviewAuthorId == userId);
             if (review == null)
             {
                 throw new NotFoundException("Review not found for the current user.");
@@ -69,17 +66,20 @@ namespace CookingAssistantAPI.Repositories.Reviews
         }
         
 
-        private async Task<Review> GetReviewById(int reviewId)
+        public async Task<bool> DeleteReviewAsync(int reviewId, int? userId)
         {
-            var review = await _context.Reviews
-                .FirstOrDefaultAsync(r => r.Id == reviewId);
-
-            if (review is null)
+            var review = await GetReviewById(reviewId);
+            if (review.ReviewAuthorId != userId)
             {
-                throw new NotFoundException("Review not found");
+                throw new ForbidException("You can only delete your own reviews");
             }
+            _context.Reviews.Remove(review);
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                return true;
+            }
+            return false;
 
-            return review;
         }
 
         private async Task<Recipe> GetRecipeById(int recipeId)
@@ -112,6 +112,19 @@ namespace CookingAssistantAPI.Repositories.Reviews
             return await _context.SaveChangesAsync();
         }
 
-        
+        private async Task<Review> GetReviewById(int reviewId)
+        {
+            var review = await _context.Reviews
+                .FirstOrDefaultAsync(r => r.Id == reviewId);
+
+            if (review is null)
+            {
+                throw new NotFoundException("Review not found");
+            }
+
+            return review;
+        }
+
+
     }
 }

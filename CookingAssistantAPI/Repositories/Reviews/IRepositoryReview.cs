@@ -4,10 +4,11 @@ namespace CookingAssistantAPI.Repositories.Reviews
 {
     public interface IRepositoryReview
     {
-        Task AddReviewAsync(int recipeId, Review review);
-        Task ModifyReviewAsync(int recipeId, Review updatedReview);
-        Task<Review> GetUserReview(int recipeId);
+        Task AddReviewAsync(int recipeId, int?userId, Review review);
+        Task ModifyReviewAsync(int recipeId, int? userId,Review updatedReview);
+        Task<Review> GetUserReview(int recipeId, int? userId);
         Task<byte[]> GetProfilePictureAsync(int reviewId);
+        Task<bool> DeleteReviewAsync(int reviewId, int? userId);
         Task<List<Review>> GetReviewsAsync(int recipeId);
         Task<int> SaveChangesAsync();
     }

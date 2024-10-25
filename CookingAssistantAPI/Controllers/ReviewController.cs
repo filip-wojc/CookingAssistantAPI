@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CookingAssistantAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/reviews")]
     public class ReviewController : ControllerBase
     {
@@ -37,6 +38,16 @@ namespace CookingAssistantAPI.Controllers
             }
             return BadRequest();
         }
+
+        [HttpDelete("{reviewId}")]
+        public async Task<ActionResult> DeleteReview([FromRoute] int reviewId)
+        {
+            if (await _service.DeleteReviewAsync(reviewId))
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        } 
 
         [HttpGet("{recipeId}/my-review")]
         public async Task<ActionResult<ReviewGetDTO>> GetUserReview([FromRoute] int recipeId)

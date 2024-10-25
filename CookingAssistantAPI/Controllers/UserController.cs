@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.Tools;
 using CookingAssistantAPI.DTO;
+using CookingAssistantAPI.Services.RecipeServices;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -16,9 +17,11 @@ namespace CookingAssistantAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
-        public UserController(IUserService service)
+        private readonly IRecipePaginationService _paginationService;
+        public UserController(IUserService service, IRecipePaginationService paginationService)
         {
             _service = service;
+            _paginationService = paginationService;
         }
         
         [HttpPost]
@@ -55,10 +58,11 @@ namespace CookingAssistantAPI.Controllers
 
         [HttpGet("favourite-recipes")]
         [Authorize]
-        public async Task<ActionResult<List<RecipeSimpleGetDTO>>> GetFavouriteRecipes([FromQuery] RecipeQuery query)
+        public async Task<ActionResult<PageResult<RecipeSimpleGetDTO>>> GetFavouriteRecipes([FromQuery] RecipeQuery query)
         {
             var favouriteRecipes = await _service.GetFavouriteRecipesAsync(query);
-            return Ok(favouriteRecipes);
+            var pageResult = _paginationService.GetPaginatedResult(query, favouriteRecipes);
+            return Ok(pageResult);
         }
 
         [HttpPost("image")]
