@@ -76,19 +76,6 @@ namespace CookingAssistantAPI.Controllers
             return File(imageData, "image/jpeg");
         }
 
-        [HttpGet("nutrientsList")]
-        public async Task<ActionResult<List<string>>> GetNutrientsList()
-        {
-            var nutrients = await _service.GetAllNutrientsAsync();
-            return Ok(nutrients);
-        }
-        [HttpGet("ingredientsList")]
-        public async Task<ActionResult<List<string>>> GetIngredientsList()
-        {
-            var ingredients = await _service.GetAllIngredientsAsync();
-            return Ok(ingredients);
-        }
-
         // public async ModifyRecipe
 
     }
