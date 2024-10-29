@@ -59,6 +59,37 @@ namespace CookingAssistantAPI.Services.RecipeServices
             return false;
         }
 
+        public async Task<bool> ModifyRecipeAsync(RecipeCreateDTO recipeDto, int recipeId)
+        {
+            var recipe = _mapper.Map<Recipe>(recipeDto);
+
+            var nutrientData = recipe.RecipeNutrients
+               .Zip(recipeDto.NutrientQuantities, (recipeNutrient, quantity) => new { recipeNutrient, quantity })
+               .Zip(recipeDto.NutrientUnits, (pair, unit) => new { pair.recipeNutrient, pair.quantity, unit });
+
+            var ingredientData = recipe.RecipeIngredients
+                .Zip(recipeDto.IngredientQuantities, (recipeIngredient, quantity) => new { recipeIngredient, quantity })
+                .Zip(recipeDto.IngredientUnits, (pair, unit) => new { pair.recipeIngredient, pair.quantity, unit });
+
+            foreach (var data in nutrientData)
+            {
+                data.recipeNutrient.Quantity = data.quantity;
+                data.recipeNutrient.Unit = data.unit;
+            }
+
+            foreach (var data in ingredientData)
+            {
+                data.recipeIngredient.Quantity = data.quantity;
+                data.recipeIngredient.Unit = data.unit;
+            }
+
+            if (await _repository.ModifyRecipeAsync(recipe, recipeId, _userContext.UserId))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public async Task<bool> DeleteRecipeByIdAsync(int recipeId)
         {
             if (await _repository.DeleteRecipeByIdAsync(recipeId, _userContext.UserId))
@@ -110,5 +141,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
             }
             return image;
         }
+
+        
     }
 }

@@ -37,6 +37,16 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
+        [HttpPut("{*recipeId}")]
+        public async Task<ActionResult> ModifyRecipe([FromRoute] int recipeId, [FromForm] RecipeCreateDTO recipeDto)
+        {
+            if (await _service.ModifyRecipeAsync(recipeDto, recipeId))
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
         [HttpDelete("{*recipeId}")]
         public async Task<ActionResult> DeleteRecipe([FromRoute] int recipeId)
         {

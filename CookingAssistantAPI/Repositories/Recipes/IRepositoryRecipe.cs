@@ -1,5 +1,4 @@
 ﻿using CookingAssistantAPI.Database.Models;
-using CookingAssistantAPI.DTO;
 
 namespace CookingAssistantAPI.Repositories
 {
@@ -12,5 +11,6 @@ namespace CookingAssistantAPI.Repositories
         Task<byte[]?> GetRecipeImageAsync(int recipeId);
         Task<int> SaveChangesAsync();
         Task<bool> DeleteRecipeByIdAsync(int recipeId, int? userId);
+        Task<bool> ModifyRecipeAsync(Recipe recipe, int recipeId, int? userId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Database.Models;
+using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,24 +53,35 @@ namespace CookingAssistantAPI.Repositories.Recipes
             await _context.Recipes.AddAsync(recipe);
         }
 
-        public async Task<Recipe> GetRecipeByIdAsync(int recipeId)
-        {
-            var recipe = await _context.Recipes
-                .Include(r => r.Category)
-                .Include(r => r.CreatedBy)
-                .Include(r => r.Steps)
-                .Include(r => r.RecipeIngredients) // Include RecipeIngredients
-                    .ThenInclude(ri => ri.Ingredient) // Then include the related Ingredient
-                .Include(r => r.RecipeNutrients) // Include RecipeNutrients
-                    .ThenInclude(rn => rn.Nutrient) // Then include the related Nutrient
-                .FirstOrDefaultAsync(r => r.Id == recipeId);
 
-            if (recipe is null)
+        public async Task<bool> ModifyRecipeAsync(Recipe recipe, int recipeId, int? userId)
+        {
+            var recipeToModify = await GetRecipeById(recipeId);
+
+            if (recipeToModify.CreatedById != userId)
             {
-                throw new NotFoundException("Recipe not found");
+                throw new ForbidException("You can't modify a recipe which was not added by you");
             }
 
-            return recipe;
+            recipeToModify.ImageData = recipe.ImageData;
+            recipeToModify.Steps = recipe.Steps;
+            recipeToModify.Serves = recipe.Serves;
+            recipeToModify.Description = recipe.Description;
+            recipeToModify.Name = recipe.Name;
+            recipeToModify.Difficulty = recipe.Difficulty;
+            recipeToModify.TimeInMinutes = recipe.TimeInMinutes;
+            recipeToModify.RecipeIngredients = recipe.RecipeIngredients;
+            recipeToModify.RecipeNutrients = recipe.RecipeNutrients;
+
+            var result = await _context.SaveChangesAsync();
+
+            return result > 0;
+
+        }
+
+        public async Task<Recipe> GetRecipeByIdAsync(int recipeId)
+        {
+            return await GetRecipeById(recipeId);
         }
 
         public async Task<Recipe> GetRecipeByNameAsync(string recipeName)
@@ -134,6 +146,27 @@ namespace CookingAssistantAPI.Repositories.Recipes
 
             return recipe.ImageData;
         }
+
+        private async Task<Recipe> GetRecipeById(int recipeId)
+        {
+            var recipe = await _context.Recipes
+                .Include(r => r.Category)
+                .Include(r => r.CreatedBy)
+                .Include(r => r.Steps)
+                .Include(r => r.RecipeIngredients) // Include RecipeIngredients
+                    .ThenInclude(ri => ri.Ingredient) // Then include the related Ingredient
+                .Include(r => r.RecipeNutrients) // Include RecipeNutrients
+                    .ThenInclude(rn => rn.Nutrient) // Then include the related Nutrient
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
+
+            if (recipe is null)
+            {
+                throw new NotFoundException("Recipe not found");
+            }
+
+            return recipe;
+        }
+       
     }
 
 }
