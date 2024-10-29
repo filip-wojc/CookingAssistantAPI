@@ -76,6 +76,14 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
+        [HttpGet("image")]
+        [Authorize]
+        public async Task<ActionResult<byte[]>> GetUserProfilePicture()
+        {
+            var imageData = await _service.GetUserProfilePictureAsync();
+            return File(imageData, "image/jpeg");
+        }
+
         [HttpDelete("delete/{userName}")]
         [Authorize]
         public async Task<ActionResult> DeleteUser([FromRoute] string userName)
@@ -98,6 +106,6 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
-        // public async ModifyProfile {ProfilePic, UserName}
+       
     }
 }

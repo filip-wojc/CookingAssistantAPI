@@ -54,6 +54,21 @@ namespace CookingAssistantAPI.Repositories.Users
             return user.FavouriteRecipes.ToList();
         }
 
+        public async Task<byte[]> GetProfilePictureAsync(int? userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+            var profilePicture = user.ProfilePictureImageData;
+            if (profilePicture is null)
+            {
+                throw new BadRequestException("User does not have a profile picture");
+            }
+            return profilePicture;
+        }
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             var user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);

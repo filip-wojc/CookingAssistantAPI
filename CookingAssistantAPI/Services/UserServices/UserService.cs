@@ -129,5 +129,11 @@ namespace CookingAssistantAPI.Services.UserServices
             }
             return false;
         }
+
+        public async Task<byte[]> GetUserProfilePictureAsync()
+        {
+            var profilePicture = await _repository.GetProfilePictureAsync(_userContext.UserId);
+            return profilePicture;
+        }
     }
 }

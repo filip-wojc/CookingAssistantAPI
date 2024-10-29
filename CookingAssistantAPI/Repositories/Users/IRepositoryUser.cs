@@ -12,5 +12,6 @@ namespace CookingAssistantAPI.Repositories.Users
         Task<bool> UploadProfilePicture(int? userId, byte[] imageData);
         Task<bool> RemoveUserFromDbAsync(int? userId, string userName);
         Task<bool> RemoveRecipeFromFavouritesAsync(int?userId, int recipeId);
+        Task<byte[]> GetProfilePictureAsync(int? userId);
     }
 }

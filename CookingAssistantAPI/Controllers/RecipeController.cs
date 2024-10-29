@@ -86,7 +86,5 @@ namespace CookingAssistantAPI.Controllers
             return File(imageData, "image/jpeg");
         }
 
-        // public async ModifyRecipe
-
     }
 }
