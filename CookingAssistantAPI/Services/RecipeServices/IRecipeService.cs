@@ -14,5 +14,6 @@ namespace CookingAssistantAPI.Services.RecipeServices
         Task<byte[]> GetRecipeImageAsync(int recipeId);
         Task<bool> DeleteRecipeByIdAsync(int recipeId);
         Task<bool> ModifyRecipeAsync(RecipeCreateDTO recipeDto, int recipeId);
+        Task<MemoryStream> GetRecipePdf(int recipeId);
     }
 }

@@ -8,6 +8,10 @@ using CookingAssistantAPI.Services.UserServices;
 using CookingAssistantAPI.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PdfSharpCore.Drawing;
+using PdfSharpCore.Pdf;
+using System.Net.NetworkInformation;
+using System.Reflection.Metadata;
 
 namespace CookingAssistantAPI.Services.RecipeServices
 {
@@ -142,6 +146,84 @@ namespace CookingAssistantAPI.Services.RecipeServices
             return image;
         }
 
-        
+        public async Task<MemoryStream> GetRecipePdf(int recipeId)
+        {
+            var recipeDto = await GetRecipeByIdAsync(recipeId);
+
+            var stream = new MemoryStream();
+            var document = new PdfDocument();
+            var page = document.AddPage();
+            var graphics = XGraphics.FromPdfPage(page);
+            XFont font = new XFont("Verdana", 13);
+            XFont fontBold = new XFont("Verdana", 15, XFontStyle.Bold);
+
+            graphics.DrawString($"{recipeDto.Name}", fontBold, XBrushes.Black, new XRect(0, 10, page.Width, page.Height), XStringFormats.TopCenter);
+            graphics.DrawString($"{recipeDto.AuthorName}", fontBold, XBrushes.Black, new XRect(15, 10, page.Width, page.Height), XStringFormats.TopLeft);
+            graphics.DrawString($"Difficulty: {recipeDto.Difficulty}", fontBold, XBrushes.Black, new XRect(-15, 10, page.Width, page.Height), XStringFormats.TopRight);
+            graphics.DrawString($"Serves: {recipeDto.Serves}", fontBold, XBrushes.Black, new XRect(-15, 25, page.Width, page.Height), XStringFormats.TopRight);
+            var splittedDesc = SplitIntoEqualParts(recipeDto.Description, 45);
+            var lineHeight = 35;
+            foreach (var tx in splittedDesc)
+            {
+                graphics.DrawString(tx, font, XBrushes.Black, new XRect(0, lineHeight, page.Width, page.Height), XStringFormats.TopCenter);
+                lineHeight += 15;
+            }
+            
+            var leftLineHeight = 10;
+            for (int i = recipeDto.Ingredients.Count - 1; i >= 0; i--)
+            {
+                var ing = recipeDto.Ingredients[i];
+                graphics.DrawString($"{ing.IngredientName} - {ing.Quantity} {ing.Unit}", font, XBrushes.Black, new XRect(10, -leftLineHeight, page.Width, page.Height), XStringFormats.BottomLeft);
+                leftLineHeight += 15;
+            }
+            graphics.DrawString($"Ingredients:", font, XBrushes.Black, new XRect(10, -leftLineHeight, page.Width, page.Height), XStringFormats.BottomLeft);
+
+            var rightLineHeight = 10;
+            for (int i = recipeDto.Nutrients.Count - 1; i >= 0; i--)
+            {
+                var nut = recipeDto.Nutrients[i];
+                graphics.DrawString($"{nut.NutrientName} - {nut.Quantity} {nut.Unit}", font, XBrushes.Black, new XRect(-10, -rightLineHeight, page.Width, page.Height), XStringFormats.BottomRight);
+                rightLineHeight += 15;
+            }
+            graphics.DrawString($"Nutrients:", font, XBrushes.Black, new XRect(-10, -rightLineHeight, page.Width, page.Height), XStringFormats.BottomRight);
+            lineHeight += 15;
+            graphics.DrawString("How to prepare", fontBold, XBrushes.Black, new XRect(10, lineHeight, page.Width, page.Height), XStringFormats.TopLeft);
+            lineHeight += 25;
+            foreach (var step in recipeDto.Steps)
+            {
+                graphics.DrawString($"{step.StepNumber}:", font, XBrushes.Black, new XRect(30, lineHeight, page.Width, page.Height), XStringFormats.TopLeft);
+                var splittedStep = SplitIntoEqualParts(step.Description, 50);
+                foreach (var tx in splittedStep)
+                {
+                    graphics.DrawString(tx, font, XBrushes.Black, new XRect(50, lineHeight, page.Width, page.Height), XStringFormats.TopLeft);
+                    lineHeight += 15;
+                }
+                lineHeight += 10;
+            }
+            graphics.DrawString($"Nutrients:", font, XBrushes.Black, new XRect(-10, -rightLineHeight, page.Width, page.Height), XStringFormats.BottomRight);
+
+            document.Save(stream, false);
+
+            stream.Position = 0;
+
+            return stream;
+        }
+        private string[] SplitIntoEqualParts(string input, int partLength)
+        {
+            if (partLength <= 0)
+                throw new ArgumentException("Długość części musi być większa niż 0.", nameof(partLength));
+
+            int totalParts = (int)Math.Ceiling((double)input.Length / partLength);
+            string[] result = new string[totalParts];
+
+            for (int i = 0; i < totalParts; i++)
+            {
+                int start = i * partLength;
+                result[i] = input.Substring(start, Math.Min(partLength, input.Length - start));
+            }
+
+            return result;
+        }
+
     }
 }

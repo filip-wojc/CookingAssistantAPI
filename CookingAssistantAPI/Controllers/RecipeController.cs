@@ -10,6 +10,7 @@ using CookingAssistantAPI.Services.ReviewServices;
 using CookingAssistantAPI.Tools;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CookingAssistantAPI.Services.RecipeServices;
+using Swashbuckle.AspNetCore.Annotations;
 
 
 namespace CookingAssistantAPI.Controllers
@@ -84,6 +85,14 @@ namespace CookingAssistantAPI.Controllers
         {
             var imageData = await _service.GetRecipeImageAsync(recipeId);
             return File(imageData, "image/jpeg");
+        }
+
+        [HttpGet("pdf/{recipeId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GeneratePdf([FromRoute] int recipeId)
+        {
+            var pdfStream = await _service.GetRecipePdf(recipeId);
+            return File(pdfStream.ToArray(), "application/pdf","generated.pdf");
         }
 
     }
