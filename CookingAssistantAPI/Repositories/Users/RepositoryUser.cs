@@ -26,6 +26,10 @@ namespace CookingAssistantAPI.Repositories.Users
             {
                 throw new NotFoundException("User not found");
             }
+            if (user.FavouriteRecipes.Contains(recipe))
+            {
+                throw new ForbidException("You can't add the same recipe to favourites");
+            }
             user.FavouriteRecipes?.Add(recipe);
             if (await _context.SaveChangesAsync() > 0)
             {
