@@ -70,8 +70,44 @@ namespace CookingAssistantAPI.Repositories.Recipes
             recipeToModify.Name = recipe.Name;
             recipeToModify.Difficulty = recipe.Difficulty;
             recipeToModify.TimeInMinutes = recipe.TimeInMinutes;
-            recipeToModify.RecipeIngredients = recipe.RecipeIngredients;
+
+            foreach (var recipeIngredient in recipe.RecipeIngredients)
+            {
+                var existingIngredient = await _context.Ingredients
+                    .FirstOrDefaultAsync(i => i.IngredientName == recipeIngredient.Ingredient.IngredientName);
+
+                if (existingIngredient != null)
+                {
+                    recipeIngredient.Ingredient = existingIngredient;
+                }
+                else
+                {
+                    // EF Core will track this as a new entity
+                    _context.Ingredients.Add(recipeIngredient.Ingredient);
+                }
+            }
+
+            // Check and attach existing nutrients
+            foreach (var recipeNutrient in recipe.RecipeNutrients)
+            {
+                var existingNutrient = await _context.Nutrients
+                    .FirstOrDefaultAsync(n => n.NutrientName == recipeNutrient.Nutrient.NutrientName);
+
+                if (existingNutrient != null)
+                {
+                    recipeNutrient.Nutrient = existingNutrient;
+                }
+                else
+                {
+                    // EF Core will track this as a new entity
+                    _context.Nutrients.Add(recipeNutrient.Nutrient);
+                }
+            }
+
             recipeToModify.RecipeNutrients = recipe.RecipeNutrients;
+            recipeToModify.RecipeIngredients = recipe.RecipeIngredients;
+
+            
 
             var result = await _context.SaveChangesAsync();
 
