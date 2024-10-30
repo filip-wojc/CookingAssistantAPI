@@ -65,9 +65,9 @@ namespace CookingAssistantAPI.Services.ReviewServices
             return profilePic;
         }
 
-        public async Task<bool> DeleteReviewAsync(int reviewId)
+        public async Task<bool> DeleteReviewAsync(int recipeId)
         {
-            if (await _repository.DeleteReviewAsync(reviewId, _userContext.UserId))
+            if (await _repository.DeleteReviewAsync(recipeId, _userContext.UserId))
             {
                 return true;
             }

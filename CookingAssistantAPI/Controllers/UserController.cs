@@ -95,7 +95,7 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("favourite-recipes/delete/{recipeId}")]
+        [HttpDelete("favourite-recipes/{recipeId}")]
         [Authorize]
         public async Task<ActionResult> RemoveRecipeFromFavourites([FromRoute] int recipeId)
         {

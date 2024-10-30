@@ -72,9 +72,14 @@ namespace CookingAssistantAPI.Repositories.Reviews
         }
         
 
-        public async Task<bool> DeleteReviewAsync(int reviewId, int? userId)
+        public async Task<bool> DeleteReviewAsync(int recipeId, int? userId)
         {
-            var review = await GetReviewById(reviewId);
+            var recipe = await GetRecipeById(recipeId);
+            var review = recipe.UsersReviews.FirstOrDefault(r => r.RatedRecipeId == recipeId && r.ReviewAuthorId == userId);
+            if (review == null)
+            {
+                throw new NotFoundException("Review not found for the current user.");
+            }
             if (review.ReviewAuthorId != userId)
             {
                 throw new ForbidException("You can only delete your own reviews");

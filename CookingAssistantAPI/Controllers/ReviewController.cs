@@ -39,10 +39,10 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("{reviewId}")]
-        public async Task<ActionResult> DeleteReview([FromRoute] int reviewId)
+        [HttpDelete("{recipeId}/delete")]
+        public async Task<ActionResult> DeleteReview([FromRoute] int recipeId)
         {
-            if (await _service.DeleteReviewAsync(reviewId))
+            if (await _service.DeleteReviewAsync(recipeId))
             {
                 return NoContent();
             }
