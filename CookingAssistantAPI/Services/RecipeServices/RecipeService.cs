@@ -154,15 +154,15 @@ namespace CookingAssistantAPI.Services.RecipeServices
             var document = new PdfDocument();
             var page = document.AddPage();
             var graphics = XGraphics.FromPdfPage(page);
-            XFont font = new XFont("Verdana", 13);
-            XFont fontBold = new XFont("Verdana", 15, XFontStyle.Bold);
+            XFont font = new XFont("Verdana", 10);
+            XFont fontBold = new XFont("Verdana", 12, XFontStyle.Bold);
 
             graphics.DrawString($"{recipeDto.Name}", fontBold, XBrushes.Black, new XRect(0, 10, page.Width, page.Height), XStringFormats.TopCenter);
             graphics.DrawString($"{recipeDto.AuthorName}", fontBold, XBrushes.Black, new XRect(15, 10, page.Width, page.Height), XStringFormats.TopLeft);
             graphics.DrawString($"Difficulty: {recipeDto.Difficulty}", fontBold, XBrushes.Black, new XRect(-15, 10, page.Width, page.Height), XStringFormats.TopRight);
             graphics.DrawString($"Serves: {recipeDto.Serves}", fontBold, XBrushes.Black, new XRect(-15, 25, page.Width, page.Height), XStringFormats.TopRight);
             graphics.DrawString($"Time to prepare: {recipeDto.TimeInMinutes}min", fontBold, XBrushes.Black, new XRect(-15, 40, page.Width, page.Height), XStringFormats.TopRight);
-            var splittedDesc = SplitIntoEqualParts(recipeDto.Description, 45);
+            var splittedDesc = SplitIntoEqualParts($"{recipeDto.Description}", 100);
             var lineHeight = 70;
             foreach (var tx in splittedDesc)
             {
@@ -170,6 +170,21 @@ namespace CookingAssistantAPI.Services.RecipeServices
                 lineHeight += 15;
             }
             
+           
+            lineHeight += 15;
+            graphics.DrawString("How to prepare", fontBold, XBrushes.Black, new XRect(10, lineHeight, page.Width, page.Height), XStringFormats.TopLeft);
+            lineHeight += 25;
+            foreach (var step in recipeDto.Steps)
+            {
+                graphics.DrawString($"{step.StepNumber}:", font, XBrushes.Black, new XRect(20, lineHeight, page.Width, page.Height), XStringFormats.TopLeft);
+                var splittedStep = SplitIntoEqualParts($"{step.Description}", 105);
+                foreach (var tx in splittedStep)
+                {
+                    graphics.DrawString(tx, font, XBrushes.Black, new XRect(35, lineHeight, page.Width, page.Height), XStringFormats.TopLeft);
+                    lineHeight += 15;
+                }
+                lineHeight += 10;
+            }
             var leftLineHeight = 10;
             for (int i = recipeDto.Ingredients.Count - 1; i >= 0; i--)
             {
@@ -185,21 +200,6 @@ namespace CookingAssistantAPI.Services.RecipeServices
                 var nut = recipeDto.Nutrients[i];
                 graphics.DrawString($"{nut.NutrientName} - {nut.Quantity} {nut.Unit}", font, XBrushes.Black, new XRect(-10, -rightLineHeight, page.Width, page.Height), XStringFormats.BottomRight);
                 rightLineHeight += 15;
-            }
-            graphics.DrawString($"Nutrients:", font, XBrushes.Black, new XRect(-10, -rightLineHeight, page.Width, page.Height), XStringFormats.BottomRight);
-            lineHeight += 15;
-            graphics.DrawString("How to prepare", fontBold, XBrushes.Black, new XRect(10, lineHeight, page.Width, page.Height), XStringFormats.TopLeft);
-            lineHeight += 25;
-            foreach (var step in recipeDto.Steps)
-            {
-                graphics.DrawString($"{step.StepNumber}:", font, XBrushes.Black, new XRect(30, lineHeight, page.Width, page.Height), XStringFormats.TopLeft);
-                var splittedStep = SplitIntoEqualParts(step.Description, 50);
-                foreach (var tx in splittedStep)
-                {
-                    graphics.DrawString(tx, font, XBrushes.Black, new XRect(50, lineHeight, page.Width, page.Height), XStringFormats.TopLeft);
-                    lineHeight += 15;
-                }
-                lineHeight += 10;
             }
             graphics.DrawString($"Nutrients:", font, XBrushes.Black, new XRect(-10, -rightLineHeight, page.Width, page.Height), XStringFormats.BottomRight);
 
