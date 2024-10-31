@@ -7,6 +7,8 @@ namespace CookingAssistantAPI.Database.Models
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? ModificationDate { get; set; }
         public virtual User? CreatedBy { get; set; }
         public int? CreatedById { get; set; }
         public byte[]? ImageData { get; set; }

@@ -1,6 +1,7 @@
 ﻿using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CookingAssistantAPI.Repositories.Nutrients
 {
@@ -18,7 +19,7 @@ namespace CookingAssistantAPI.Repositories.Nutrients
                 .Select(n => n.NutrientName)
                 .ToListAsync();
 
-            if (nutrients is null)
+            if (nutrients.IsNullOrEmpty())
             {
                 throw new NotFoundException("Nutrients not found");
             }

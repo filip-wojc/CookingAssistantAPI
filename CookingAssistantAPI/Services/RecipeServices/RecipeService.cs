@@ -54,6 +54,8 @@ namespace CookingAssistantAPI.Services.RecipeServices
                 data.recipeIngredient.Unit = data.unit;
             }
 
+            recipe.CreatedDate = DateTime.Now;
+
             await _repository.AddRecipeAsync(recipe);
 
             if (await _repository.SaveChangesAsync() > 0)

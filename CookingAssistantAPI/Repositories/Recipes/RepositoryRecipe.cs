@@ -70,6 +70,7 @@ namespace CookingAssistantAPI.Repositories.Recipes
             recipeToModify.Name = recipe.Name;
             recipeToModify.Difficulty = recipe.Difficulty;
             recipeToModify.TimeInMinutes = recipe.TimeInMinutes;
+            recipeToModify.ModificationDate = DateTime.Now;
 
             foreach (var recipeIngredient in recipe.RecipeIngredients)
             {
