@@ -24,8 +24,7 @@ namespace CookingAssistantAPI.Controllers
             _paginationService = paginationService;
         }
 
-        [HttpPost]
-        [Route("register")]
+        [HttpPost("register")]
         public async Task<ActionResult> RegisterUser([FromBody] UserRegisterDTO user)
         {
             if (await _service.RegisterUser(user))
@@ -35,15 +34,25 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("login")]
+        [HttpPost("login")]
         public async Task<ActionResult> LoginUser([FromBody] UserLoginDTO user)
         {
             string token = await _service.GenerateToken(user);
             var response = new LogInResponseDTO { Token = token };
             return Ok(response);
         }
+
+        [HttpPut("change-password")]
+        [Authorize]
+        public async Task<ActionResult> ChangePassword([FromBody] UserPasswordChangeDTO dto)
+        {
+            if (await _service.ChangeUserPassword(dto))
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
 
         [HttpPost("favourite/{recipeId}")]
         [Authorize]

@@ -135,5 +135,24 @@ namespace CookingAssistantAPI.Services.UserServices
             var profilePicture = await _repository.GetProfilePictureAsync(_userContext.UserId);
             return profilePicture;
         }
+
+        public async Task<bool> ChangeUserPassword(UserPasswordChangeDTO dto)
+        {
+            var user = await _repository.GetUserByEmailAsync(_userContext.Email);
+
+            var passwordVerification = _hasher.VerifyHashedPassword(user, user.PasswordHash, dto.OldPassword);
+            if (passwordVerification == PasswordVerificationResult.Failed)
+            {
+                throw new BadRequestException("Invalid old password");
+            }
+
+            dto.NewPassword = _hasher.HashPassword(user, dto.NewPassword);
+            if (await _repository.ChangePasswordAsync(_userContext.UserId, dto))
+            {
+                return true;
+            }
+            return false;
+
+        }
     }
 }
