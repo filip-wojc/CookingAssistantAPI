@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CookingAssistantAPI.Migrations
 {
     [DbContext(typeof(CookingDbContext))]
-    [Migration("20241018152938_ReviewAuthorIdNullable")]
-    partial class ReviewAuthorIdNullable
+    [Migration("20241031172346_recipe-date")]
+    partial class recipedate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,6 +82,9 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<int?>("CreatedById")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
@@ -91,10 +94,13 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<byte[]>("ImageData")
                         .HasColumnType("BLOB");
 
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<float?>("Ratings")
+                    b.Property<double?>("Ratings")
                         .HasColumnType("REAL");
 
                     b.Property<int>("Serves")
@@ -162,6 +168,12 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
@@ -232,6 +244,9 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("TEXT");
 
+                    b.Property<byte[]>("ProfilePictureImageData")
+                        .HasColumnType("BLOB");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("INTEGER");
 
@@ -276,7 +291,8 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasOne("CookingAssistantAPI.Database.Models.User", "CreatedBy")
                         .WithMany("CreatedRecipes")
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
 
@@ -331,7 +347,8 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasOne("CookingAssistantAPI.Database.Models.User", "ReviewAuthor")
                         .WithMany("Reviews")
-                        .HasForeignKey("ReviewAuthorId");
+                        .HasForeignKey("ReviewAuthorId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("RatedRecipe");
 

@@ -6,27 +6,21 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CookingAssistantAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class ProfilePicturePlusReviewFields : Migration
+    public partial class recipedate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<byte[]>(
-                name: "ProfilePictureImageData",
-                table: "Users",
-                type: "BLOB",
-                nullable: true);
-
             migrationBuilder.AddColumn<DateTime>(
-                name: "DateCreated",
-                table: "Reviews",
+                name: "CreatedDate",
+                table: "Recipes",
                 type: "TEXT",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "DateModified",
-                table: "Reviews",
+                name: "ModificationDate",
+                table: "Recipes",
                 type: "TEXT",
                 nullable: true);
         }
@@ -35,16 +29,12 @@ namespace CookingAssistantAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ProfilePictureImageData",
-                table: "Users");
+                name: "CreatedDate",
+                table: "Recipes");
 
             migrationBuilder.DropColumn(
-                name: "DateCreated",
-                table: "Reviews");
-
-            migrationBuilder.DropColumn(
-                name: "DateModified",
-                table: "Reviews");
+                name: "ModificationDate",
+                table: "Recipes");
         }
     }
 }

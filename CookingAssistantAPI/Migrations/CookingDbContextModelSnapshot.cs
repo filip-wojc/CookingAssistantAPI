@@ -3,7 +3,6 @@ using System;
 using CookingAssistantAPI.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,11 +10,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CookingAssistantAPI.Migrations
 {
     [DbContext(typeof(CookingDbContext))]
-    [Migration("20241011171719_nullable_createdby")]
-    partial class nullable_createdby
+    partial class CookingDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,6 +44,9 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IngredientName")
+                        .IsUnique();
+
                     b.ToTable("Ingredients");
                 });
 
@@ -59,10 +59,10 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<string>("NutrientName")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Value")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("NutrientName")
+                        .IsUnique();
 
                     b.ToTable("Nutrients");
                 });
@@ -79,6 +79,9 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<int?>("CreatedById")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
@@ -88,10 +91,13 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<byte[]>("ImageData")
                         .HasColumnType("BLOB");
 
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<float>("Ratings")
+                    b.Property<double?>("Ratings")
                         .HasColumnType("REAL");
 
                     b.Property<int>("Serves")
@@ -110,6 +116,81 @@ namespace CookingAssistantAPI.Migrations
                     b.HasIndex("CreatedById");
 
                     b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("CookingAssistantAPI.Database.Models.RecipeIngredient", b =>
+                {
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Quantity")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RecipeId", "IngredientId");
+
+                    b.HasIndex("IngredientId");
+
+                    b.ToTable("RecipeIngredients");
+                });
+
+            modelBuilder.Entity("CookingAssistantAPI.Database.Models.RecipeNutrient", b =>
+                {
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NutrientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Quantity")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RecipeId", "NutrientId");
+
+                    b.HasIndex("NutrientId");
+
+                    b.ToTable("RecipeNutrients");
+                });
+
+            modelBuilder.Entity("CookingAssistantAPI.Database.Models.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RatedRecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ReviewAuthorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RatedRecipeId");
+
+                    b.HasIndex("ReviewAuthorId");
+
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.Role", b =>
@@ -160,7 +241,10 @@ namespace CookingAssistantAPI.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("RoleId")
+                    b.Property<byte[]>("ProfilePictureImageData")
+                        .HasColumnType("BLOB");
+
+                    b.Property<int>("RoleId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("UserName")
@@ -168,39 +252,15 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("RoleId");
 
-                    b.ToTable("User");
-                });
+                    b.HasIndex("UserName")
+                        .IsUnique();
 
-            modelBuilder.Entity("IngredientRecipe", b =>
-                {
-                    b.Property<int>("IngredientsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("RecipesId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("IngredientsId", "RecipesId");
-
-                    b.HasIndex("RecipesId");
-
-                    b.ToTable("IngredientRecipe");
-                });
-
-            modelBuilder.Entity("NutrientRecipe", b =>
-                {
-                    b.Property<int>("NutrientsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("RecipesId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("NutrientsId", "RecipesId");
-
-                    b.HasIndex("RecipesId");
-
-                    b.ToTable("NutrientRecipe");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("UserFavoriteRecipe", b =>
@@ -228,11 +288,68 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasOne("CookingAssistantAPI.Database.Models.User", "CreatedBy")
                         .WithMany("CreatedRecipes")
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
 
                     b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("CookingAssistantAPI.Database.Models.RecipeIngredient", b =>
+                {
+                    b.HasOne("CookingAssistantAPI.Database.Models.Ingredient", "Ingredient")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CookingAssistantAPI.Database.Models.Recipe", "Recipe")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient");
+
+                    b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("CookingAssistantAPI.Database.Models.RecipeNutrient", b =>
+                {
+                    b.HasOne("CookingAssistantAPI.Database.Models.Nutrient", "Nutrient")
+                        .WithMany("RecipeNutrients")
+                        .HasForeignKey("NutrientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CookingAssistantAPI.Database.Models.Recipe", "Recipe")
+                        .WithMany("RecipeNutrients")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Nutrient");
+
+                    b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("CookingAssistantAPI.Database.Models.Review", b =>
+                {
+                    b.HasOne("CookingAssistantAPI.Database.Models.Recipe", "RatedRecipe")
+                        .WithMany("UsersReviews")
+                        .HasForeignKey("RatedRecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CookingAssistantAPI.Database.Models.User", "ReviewAuthor")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ReviewAuthorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("RatedRecipe");
+
+                    b.Navigation("ReviewAuthor");
                 });
 
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.Step", b =>
@@ -250,39 +367,11 @@ namespace CookingAssistantAPI.Migrations
                 {
                     b.HasOne("CookingAssistantAPI.Database.Models.Role", "Role")
                         .WithMany()
-                        .HasForeignKey("RoleId");
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("IngredientRecipe", b =>
-                {
-                    b.HasOne("CookingAssistantAPI.Database.Models.Ingredient", null)
-                        .WithMany()
-                        .HasForeignKey("IngredientsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CookingAssistantAPI.Database.Models.Recipe", null)
-                        .WithMany()
-                        .HasForeignKey("RecipesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("NutrientRecipe", b =>
-                {
-                    b.HasOne("CookingAssistantAPI.Database.Models.Nutrient", null)
-                        .WithMany()
-                        .HasForeignKey("NutrientsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CookingAssistantAPI.Database.Models.Recipe", null)
-                        .WithMany()
-                        .HasForeignKey("RecipesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("UserFavoriteRecipe", b =>
@@ -305,14 +394,32 @@ namespace CookingAssistantAPI.Migrations
                     b.Navigation("Recipes");
                 });
 
+            modelBuilder.Entity("CookingAssistantAPI.Database.Models.Ingredient", b =>
+                {
+                    b.Navigation("RecipeIngredients");
+                });
+
+            modelBuilder.Entity("CookingAssistantAPI.Database.Models.Nutrient", b =>
+                {
+                    b.Navigation("RecipeNutrients");
+                });
+
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.Recipe", b =>
                 {
+                    b.Navigation("RecipeIngredients");
+
+                    b.Navigation("RecipeNutrients");
+
                     b.Navigation("Steps");
+
+                    b.Navigation("UsersReviews");
                 });
 
             modelBuilder.Entity("CookingAssistantAPI.Database.Models.User", b =>
                 {
                     b.Navigation("CreatedRecipes");
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

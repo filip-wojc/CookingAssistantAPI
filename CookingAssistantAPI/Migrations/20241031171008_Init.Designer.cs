@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CookingAssistantAPI.Migrations
 {
     [DbContext(typeof(CookingDbContext))]
-    [Migration("20241024123606_ProfilePicturePlusReviewFields")]
-    partial class ProfilePicturePlusReviewFields
+    [Migration("20241031171008_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -285,7 +285,8 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasOne("CookingAssistantAPI.Database.Models.User", "CreatedBy")
                         .WithMany("CreatedRecipes")
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
 
@@ -340,7 +341,8 @@ namespace CookingAssistantAPI.Migrations
 
                     b.HasOne("CookingAssistantAPI.Database.Models.User", "ReviewAuthor")
                         .WithMany("Reviews")
-                        .HasForeignKey("ReviewAuthorId");
+                        .HasForeignKey("ReviewAuthorId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("RatedRecipe");
 
