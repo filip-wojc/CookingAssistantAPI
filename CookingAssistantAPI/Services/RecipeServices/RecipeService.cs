@@ -142,7 +142,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
 
             graphics.DrawString($"{recipeDto.Name}", fontBold, XBrushes.Black, new XRect(0, 10, page.Width, page.Height), XStringFormats.TopCenter);
             graphics.DrawString($"{recipeDto.AuthorName}", fontBold, XBrushes.Black, new XRect(15, 10, page.Width, page.Height), XStringFormats.TopLeft);
-            graphics.DrawString($"Difficulty: {recipeDto.Difficulty}", fontBold, XBrushes.Black, new XRect(-15, 10, page.Width, page.Height), XStringFormats.TopRight);
+            graphics.DrawString($"Difficulty: {recipeDto.DifficultyName}", fontBold, XBrushes.Black, new XRect(-15, 10, page.Width, page.Height), XStringFormats.TopRight);
             graphics.DrawString($"Serves: {recipeDto.Serves}", fontBold, XBrushes.Black, new XRect(-15, 25, page.Width, page.Height), XStringFormats.TopRight);
             graphics.DrawString($"Time to prepare: {recipeDto.TimeInMinutes}min", fontBold, XBrushes.Black, new XRect(-15, 40, page.Width, page.Height), XStringFormats.TopRight);
             var splittedDesc = SplitIntoEqualParts($"{recipeDto.Description}", 100);

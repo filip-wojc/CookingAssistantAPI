@@ -10,7 +10,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
         {
             { nameof(RecipeSimpleGetDTO.Ratings), r => r.Ratings },
             { nameof(RecipeSimpleGetDTO.TimeInMinutes), r => r.TimeInMinutes },
-            { nameof(RecipeSimpleGetDTO.Difficulty), r => r.Difficulty },
+            { nameof(RecipeSimpleGetDTO.DifficultyName), r => r.DifficultyName },
             { nameof(RecipeSimpleGetDTO.VoteCount), r => r.VoteCount },
             { nameof(RecipeSimpleGetDTO.CategoryName), r => r.CategoryName },
             { nameof(RecipeSimpleGetDTO.Caloricity), r => r.Caloricity }
@@ -60,9 +60,9 @@ namespace CookingAssistantAPI.Services.RecipeServices
 
                 if (sortDirection == SortDirection.Ascending)
                 {
-                    if (sortBy == SortBy.Difficulty)
+                    if (sortBy == SortBy.DifficultyName)
                     {
-                        recipeDtos = recipeDtos.OrderBy(r => DifficultyOrder[r.Difficulty.ToLower()]).ToList();
+                        recipeDtos = recipeDtos.OrderBy(r => DifficultyOrder[r.DifficultyName.ToLower()]).ToList();
                     }
                     else
                     {
@@ -72,9 +72,9 @@ namespace CookingAssistantAPI.Services.RecipeServices
                 }
                 else
                 {
-                    if (sortBy == SortBy.Difficulty)
+                    if (sortBy == SortBy.DifficultyName)
                     {
-                        recipeDtos = recipeDtos.OrderByDescending(r => DifficultyOrder[r.Difficulty.ToLower()]).ToList();
+                        recipeDtos = recipeDtos.OrderByDescending(r => DifficultyOrder[r.DifficultyName.ToLower()]).ToList();
                     }
                     else
                     {
@@ -95,7 +95,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
         {
             if (difficulty != null)
             {
-                recipeDtos = recipeDtos.Where(r => r.Difficulty.ToLower() == difficulty.ToLower()).ToList();
+                recipeDtos = recipeDtos.Where(r => r.DifficultyName.ToLower() == difficulty.ToLower()).ToList();
                 if (!recipeDtos.Any())
                 {
                     throw new BadRequestException("No recipe found with given difficulty");
@@ -113,7 +113,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
 
             if (occasion != null)
             {
-                recipeDtos = recipeDtos.Where(r => r.Occasion.ToLower() == occasion.ToLower()).ToList();
+                recipeDtos = recipeDtos.Where(r => r.OccasionName.ToLower() == occasion.ToLower()).ToList();
                 if (!recipeDtos.Any())
                 {
                     throw new BadRequestException("No recipe found with given occasion");

@@ -1,4 +1,5 @@
 ﻿using CookingAssistantAPI.Database;
+using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO.Recipes;
 using FluentValidation;
 using System.Reflection;
@@ -37,18 +38,15 @@ namespace CookingAssistantAPI.Tools.Validators
             RuleFor(r => r.CategoryId).Must(CategoryExists)
                 .WithMessage("This category does not exist");
 
+            RuleFor(r => r.OccasionId).Must(OccasionExists)
+                .WithMessage("This occasion does not exist");
+
+            RuleFor(r => r.DifficultyId).Must(DifficultyExists)
+                .WithMessage("This difficulty does not exist");
+
             RuleFor(r => r.ImageData)
                 .NotNull().WithMessage("Image data is required")
                 .NotEmpty().WithMessage("Image data cannot be empty");
-
-            RuleFor(r => r.Difficulty)
-                .NotNull().WithMessage("Difficulty is required")
-                .Must(CorrectDifficulty).WithMessage("Difficulty must be: easy, medium, or hard");
-
-            RuleFor(r => r.Occasion)
-                .NotNull().WithMessage("Occasion is required")
-                .Must(CorrectOccasion).WithMessage("Invalid Occasion");
-
 
         }
 
@@ -119,16 +117,14 @@ namespace CookingAssistantAPI.Tools.Validators
             return _context.Categories.FirstOrDefault(c => c.Id == categoryId) != null;
         }
 
-        private bool CorrectDifficulty(string difficulty)
+        private bool DifficultyExists(int difficultyId)
         {
-            var correctDifficulties = new[] { "easy", "medium", "hard" };
-            return correctDifficulties.Contains(difficulty?.ToLower());
+            return _context.Difficulties.FirstOrDefault(d => d.Id == difficultyId) != null;
         }
 
-        private bool CorrectOccasion(string occasion)
+        private bool OccasionExists(int occasionId)
         {
-            var correctOccasions = new[] { "dinner", "one pot dish", "breakfast", "main course", "brunch", "snack", "lunch", "dessert", "side dish", "appetizer" };
-            return correctOccasions.Contains(occasion?.ToLower());
+            return _context.Occasions.FirstOrDefault(o => o.Id == occasionId) != null;
         }
     }
 }

@@ -87,6 +87,8 @@ namespace CookingAssistantAPI.Repositories.Recipes
         {
             var recipe = await _context.Recipes
                 .Include(r => r.Category)
+                .Include(r => r.Difficulty)
+                .Include(r => r.Occasion)
                 .Include(r => r.CreatedBy)
                 .Include(r => r.Steps)
                 .Include(r => r.RecipeIngredients) // Include RecipeIngredients
@@ -103,7 +105,7 @@ namespace CookingAssistantAPI.Repositories.Recipes
 
         public async Task<List<Recipe>> GetAllRecipesAsync()
         {
-            var recipes = await _context.Recipes.Include(r => r.Category)
+            var recipes = await _context.Recipes.Include(r => r.Category).Include(r => r.Difficulty).Include(r => r.Occasion)
                 .Include(r => r.CreatedBy).Include(r => r.RecipeIngredients).ThenInclude(i => i.Ingredient).ToListAsync();
             return recipes;
         }
@@ -148,6 +150,8 @@ namespace CookingAssistantAPI.Repositories.Recipes
         {
             var recipe = await _context.Recipes
                 .Include(r => r.Category)
+                .Include(r => r.Difficulty)
+                .Include(r => r.Occasion)
                 .Include(r => r.CreatedBy)
                 .Include(r => r.Steps)
                 .Include(r => r.RecipeIngredients) // Include RecipeIngredients

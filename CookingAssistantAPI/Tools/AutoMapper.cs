@@ -21,11 +21,15 @@ namespace CookingAssistantAPI.Tools
             CreateMap<Recipe, RecipeGetDTO>()
                 .ForMember(r => r.AuthorName, o => o.MapFrom(src => src.CreatedBy.UserName))
                 .ForMember(r => r.CategoryName, o => o.MapFrom(src => src.Category.Name))
+                .ForMember(r => r.DifficultyName, o => o.MapFrom(src => src.Difficulty.Name))
+                .ForMember(r => r.OccasionName, o => o.MapFrom(src => src.Occasion.Name))
                 .ForMember(r => r.Ingredients, o => o.MapFrom(src => src.RecipeIngredients))
                 .ForMember(r => r.Steps, o => o.MapFrom(src => src.Steps));
 
             CreateMap<Recipe, RecipeSimpleGetDTO>()
                 .ForMember(r => r.CategoryName, o => o.MapFrom(src => src.Category.Name))
+                .ForMember(r => r.DifficultyName, o => o.MapFrom(src => src.Difficulty.Name))
+                .ForMember(r => r.OccasionName, o => o.MapFrom(src => src.Occasion.Name))
                 .ForMember(r => r.IngredientNames, o => o.MapFrom(src => src.RecipeIngredients.Select(r => r.Ingredient.IngredientName)));
 
             CreateMap<Recipe, RecipeNamesGetDTO>();

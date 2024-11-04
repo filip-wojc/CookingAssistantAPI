@@ -15,11 +15,13 @@ namespace CookingAssistantAPI.Database.Models
         public double? Ratings { get; set; }
         public int? TimeInMinutes {  get; set; }
         public int Serves { get; set; }
-        public string? Difficulty { get; set; }
+        public virtual Difficulty? Difficulty { get; set; }
+        public int DifficultyId { get; set; }
         public int VoteCount { get; set; } = 0;
         public virtual Category? Category { get; set; }
         public int CategoryId { get; set; }
-        public string? Occasion { get; set; }
+        public virtual Occasion? Occasion { get; set; }
+        public int OccasionId { get; set; }
         public int Caloricity { get; set; }
         // relationship table references
         public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
