@@ -1,6 +1,7 @@
 ﻿using CookingAssistantAPI.Database;
 using CookingAssistantAPI.DTO.Recipes;
 using FluentValidation;
+using System.Reflection;
 
 namespace CookingAssistantAPI.Tools.Validators
 {
@@ -14,6 +15,7 @@ namespace CookingAssistantAPI.Tools.Validators
             RuleFor(r => r.Name).NotNull().NotEmpty().Must(IsValidValue).WithMessage("Don't use special characters");
             RuleFor(r => r.Description).NotNull().NotEmpty().Must(IsValidValue).WithMessage("Don't use special characters");
             RuleFor(r => r.Steps).Must(IsValidValues).WithMessage("Don't use special characters");
+            RuleFor(r => r.Caloricity).NotNull().NotEmpty();
           
 
             RuleFor(r => r.IngredientNames)
@@ -29,18 +31,6 @@ namespace CookingAssistantAPI.Tools.Validators
                 .NotNull().WithMessage("Ingredient quantities cannot be null")
                 .Must(IsValidValues).WithMessage("Don't use special characters");
 
-            RuleFor(r => r.NutrientNames)
-                .NotNull().WithMessage("Nutrient names cannot be null")
-            .Must(IsValidValues).WithMessage("Don't use special characters");
-
-            RuleFor(r => r.NutrientUnits)
-                .NotNull().WithMessage("Nutrient units cannot be null")
-            .Must(IsValidValues).WithMessage("Don't use special characters");
-
-            RuleFor(r => r.NutrientQuantities)
-                .NotNull().WithMessage("Nutrient quantities cannot be null")
-            .Must(IsValidValues).WithMessage("Don't use special characters");
-
             RuleFor(r => r).Must(HaveSameListSize)
                 .WithMessage("Ingredients or nutrients data is invalid");
 
@@ -54,6 +44,10 @@ namespace CookingAssistantAPI.Tools.Validators
             RuleFor(r => r.Difficulty)
                 .NotNull().WithMessage("Difficulty is required")
                 .Must(CorrectDifficulty).WithMessage("Difficulty must be: easy, medium, or hard");
+
+            RuleFor(r => r.Occasion)
+                .NotNull().WithMessage("Occasion is required")
+                .Must(CorrectOccasion).WithMessage("Invalid Occasion");
 
 
         }
@@ -108,19 +102,16 @@ namespace CookingAssistantAPI.Tools.Validators
         private bool HaveSameListSize(RecipeCreateDTO dto)
         {
             // Handle potential nulls safely
-            if (dto.IngredientNames == null || dto.IngredientUnits == null || dto.IngredientQuantities == null ||
-                dto.NutrientNames == null || dto.NutrientUnits == null || dto.NutrientQuantities == null)
+            if (dto.IngredientNames == null || dto.IngredientUnits == null || dto.IngredientQuantities == null)
             {
                 return false;
             }
 
             var ing = dto.IngredientNames.Count();
-            var nuts = dto.NutrientNames.Count();
 
             bool ingredientsSameSize = ing == dto.IngredientUnits.Count() && ing == dto.IngredientQuantities.Count();
-            bool nutrientsSameSize = nuts == dto.NutrientUnits.Count() && nuts == dto.NutrientQuantities.Count();
 
-            return ingredientsSameSize && nutrientsSameSize;
+            return ingredientsSameSize;
         }
 
         private bool CategoryExists(int categoryId)
@@ -131,8 +122,13 @@ namespace CookingAssistantAPI.Tools.Validators
         private bool CorrectDifficulty(string difficulty)
         {
             var correctDifficulties = new[] { "easy", "medium", "hard" };
-
             return correctDifficulties.Contains(difficulty?.ToLower());
+        }
+
+        private bool CorrectOccasion(string occasion)
+        {
+            var correctOccasions = new[] { "dinner", "one pot dish", "breakfast", "main course", "brunch", "snack", "lunch", "dessert", "side dish", "appetizer" };
+            return correctOccasions.Contains(occasion?.ToLower());
         }
     }
 }

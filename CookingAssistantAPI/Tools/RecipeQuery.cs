@@ -10,7 +10,8 @@ namespace CookingAssistantAPI.Tools
         TimeInMinutes,
         Difficulty,
         VoteCount,
-        CategoryName 
+        CategoryName,
+        Caloricity
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
@@ -27,6 +28,7 @@ namespace CookingAssistantAPI.Tools
         public SortDirection? SortDirection { get; set; }
         public string? FilterByDifficulty { get; set; }
         public string? FilterByCategoryName { get; set; }
+        public string? FilterByOccasion { get; set; }
         public int? PageNumber { get; set; }
         public int? PageSize { get; set; }
     }

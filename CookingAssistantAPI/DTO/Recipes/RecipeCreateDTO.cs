@@ -12,13 +12,12 @@ namespace CookingAssistantAPI.DTO.Recipes
         public string Difficulty { get; set; }
         public int? TimeInMinutes { get; set; }
         public int CategoryId { get; set; }
+        public string Occasion {  get; set; }
+        public int Caloricity {  get; set; }
         public List<string>? IngredientNames { get; set; }
         public List<string>? IngredientQuantities { get; set; }
         public List<string>? IngredientUnits { get; set; }
         public List<string>? Steps { get; set; }
-        public List<string>? NutrientNames { get; set; }
-        public List<string>? NutrientQuantities { get; set; }
-        public List<string>? NutrientUnits { get; set; }
 
     }
 }

@@ -9,6 +9,8 @@
         public int TimeInMinutes { get; set; }
         public string Difficulty { get; set; }
         public int VoteCount { get; set; }
+        public int Caloricity { get; set; }
+        public string Occasion { get; set; }
         public string CategoryName { get; set; }
     }
 }

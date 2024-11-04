@@ -12,7 +12,8 @@ namespace CookingAssistantAPI.Services.RecipeServices
             { nameof(RecipeSimpleGetDTO.TimeInMinutes), r => r.TimeInMinutes },
             { nameof(RecipeSimpleGetDTO.Difficulty), r => r.Difficulty },
             { nameof(RecipeSimpleGetDTO.VoteCount), r => r.VoteCount },
-            { nameof(RecipeSimpleGetDTO.CategoryName), r => r.CategoryName }
+            { nameof(RecipeSimpleGetDTO.CategoryName), r => r.CategoryName },
+            { nameof(RecipeSimpleGetDTO.Caloricity), r => r.Caloricity }
         };
 
         public Dictionary<string, int> DifficultyOrder => new Dictionary<string, int>
@@ -77,7 +78,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
 
         }
 
-        public List<RecipeSimpleGetDTO> RecipeFilter(ref List<RecipeSimpleGetDTO> recipeDtos, string? categoryName, string? difficulty)
+        public List<RecipeSimpleGetDTO> RecipeFilter(ref List<RecipeSimpleGetDTO> recipeDtos, string? categoryName, string? difficulty, string? occasion)
         {
             if (difficulty != null)
             {
@@ -96,6 +97,16 @@ namespace CookingAssistantAPI.Services.RecipeServices
                     throw new BadRequestException("No recipe found with given category");
                 }
             }
+
+            if (occasion != null)
+            {
+                recipeDtos = recipeDtos.Where(r => r.Occasion.ToLower() == occasion.ToLower()).ToList();
+                if (!recipeDtos.Any())
+                {
+                    throw new BadRequestException("No recipe found with given occasion");
+                }
+            }
+
             return recipeDtos;
 
         }

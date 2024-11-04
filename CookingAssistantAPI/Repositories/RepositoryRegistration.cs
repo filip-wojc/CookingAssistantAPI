@@ -1,5 +1,4 @@
 ﻿using CookingAssistantAPI.Repositories.Ingredients;
-using CookingAssistantAPI.Repositories.Nutrients;
 using CookingAssistantAPI.Repositories.Recipes;
 using CookingAssistantAPI.Repositories.Reviews;
 using CookingAssistantAPI.Repositories.Users;
@@ -15,7 +14,6 @@ namespace CookingAssistantAPI.Repositories
             repositories.AddScoped<IRepositoryUser, RepositoryUser>();
             repositories.AddScoped<IRepositoryReview, RepositoryReview>();
             repositories.AddScoped<IRepositoryIngredient, RepositoryIngredient>();
-            repositories.AddScoped<IRepositoryNutrient, RepositoryNutrient>();
         }
     }
 }

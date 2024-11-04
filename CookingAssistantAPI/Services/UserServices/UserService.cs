@@ -97,7 +97,7 @@ namespace CookingAssistantAPI.Services.UserServices
 
             recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase);
             recipeDtos = _recipeQueryService.SortRecipes(ref recipeDtos, query.SortBy, query.SortDirection);
-            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty);
+            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty, query.FilterByOccasion);
 
             return recipeDtos;
         }

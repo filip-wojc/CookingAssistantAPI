@@ -32,23 +32,6 @@ namespace CookingAssistantAPI.Repositories.Recipes
                 }
             }
 
-            // Check and attach existing nutrients
-            foreach (var recipeNutrient in recipe.RecipeNutrients)
-            {
-                var existingNutrient = await _context.Nutrients
-                    .FirstOrDefaultAsync(n => n.NutrientName == recipeNutrient.Nutrient.NutrientName);
-
-                if (existingNutrient != null)
-                {
-                    recipeNutrient.Nutrient = existingNutrient;
-                }
-                else
-                {
-                    // EF Core will track this as a new entity
-                    _context.Nutrients.Add(recipeNutrient.Nutrient);
-                }
-            }
-
             // Now add the recipe
             await _context.Recipes.AddAsync(recipe);
         }
@@ -87,29 +70,8 @@ namespace CookingAssistantAPI.Repositories.Recipes
                     _context.Ingredients.Add(recipeIngredient.Ingredient);
                 }
             }
-
-            // Check and attach existing nutrients
-            foreach (var recipeNutrient in recipe.RecipeNutrients)
-            {
-                var existingNutrient = await _context.Nutrients
-                    .FirstOrDefaultAsync(n => n.NutrientName == recipeNutrient.Nutrient.NutrientName);
-
-                if (existingNutrient != null)
-                {
-                    recipeNutrient.Nutrient = existingNutrient;
-                }
-                else
-                {
-                    // EF Core will track this as a new entity
-                    _context.Nutrients.Add(recipeNutrient.Nutrient);
-                }
-            }
-
-            recipeToModify.RecipeNutrients = recipe.RecipeNutrients;
-            recipeToModify.RecipeIngredients = recipe.RecipeIngredients;
-
             
-
+            recipeToModify.RecipeIngredients = recipe.RecipeIngredients;
             var result = await _context.SaveChangesAsync();
 
             return result > 0;
@@ -129,8 +91,6 @@ namespace CookingAssistantAPI.Repositories.Recipes
                 .Include(r => r.Steps)
                 .Include(r => r.RecipeIngredients) // Include RecipeIngredients
                     .ThenInclude(ri => ri.Ingredient) // Then include the related Ingredient
-                .Include(r => r.RecipeNutrients) // Include RecipeNutrients
-                    .ThenInclude(rn => rn.Nutrient) // Then include the related Nutrient
                 .FirstOrDefaultAsync(r => r.Name == recipeName);
 
             if (recipe is null)
@@ -192,8 +152,6 @@ namespace CookingAssistantAPI.Repositories.Recipes
                 .Include(r => r.Steps)
                 .Include(r => r.RecipeIngredients) // Include RecipeIngredients
                     .ThenInclude(ri => ri.Ingredient) // Then include the related Ingredient
-                .Include(r => r.RecipeNutrients) // Include RecipeNutrients
-                    .ThenInclude(rn => rn.Nutrient) // Then include the related Nutrient
                 .FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe is null)
