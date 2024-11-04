@@ -93,7 +93,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
 
             var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes);
 
-            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase);
+            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase, query.IngredientsSearch);
             recipeDtos = _recipeQueryService.SortRecipes(ref recipeDtos, query.SortBy, query.SortDirection);
             recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty, query.FilterByOccasion);
 

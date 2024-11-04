@@ -12,5 +12,6 @@
         public int Caloricity { get; set; }
         public string Occasion { get; set; }
         public string CategoryName { get; set; }
+        public List<string> IngredientNames { get; set; }
     }
 }

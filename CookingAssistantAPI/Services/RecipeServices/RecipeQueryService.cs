@@ -23,7 +23,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
             { "hard", 3 }
         };
 
-        public List<RecipeSimpleGetDTO> SearchRecipes(ref List<RecipeSimpleGetDTO> recipeDtos, string? searchPhrase)
+        public List<RecipeSimpleGetDTO> SearchRecipes(ref List<RecipeSimpleGetDTO> recipeDtos, string? searchPhrase, string? ingredientsSearch)
         {
             if (searchPhrase != null)
             {
@@ -35,6 +35,19 @@ namespace CookingAssistantAPI.Services.RecipeServices
                     throw new BadRequestException("No recipe found using this search phrase");
                 }
             }
+
+            if (ingredientsSearch != null)
+            {
+                // Ingredients seprated by comma
+                var ingredients = ingredientsSearch.Split(',').Select(i => i.ToLower()).ToList();
+                recipeDtos = recipeDtos.Where(r => r.IngredientNames.Any(i => ingredients.Contains(i.ToLower()))).ToList();
+
+                if (!recipeDtos.Any())
+                {
+                    throw new BadRequestException("No recipe found using given ingredients");
+                }
+            }
+
             return recipeDtos;
         }
 
