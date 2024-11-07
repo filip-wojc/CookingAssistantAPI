@@ -53,7 +53,7 @@ namespace CookingAssistantAPI.Tools.Validators
         private bool IsValidValues(IEnumerable<string?> values)
         {
             // Znaki specjalne do zablokowania
-            string[] specialChars = { "\\", " ", };
+            string[] specialChars = { "\\" };
             var nullPattern = @"\bnull\b|\bNULL\b"; // Zablokuje samodzielne wystąpienia "null" i "NULL"
 
             foreach (var value in values)
