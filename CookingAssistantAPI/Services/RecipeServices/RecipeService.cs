@@ -172,7 +172,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
             for (int i = recipeDto.Ingredients.Count - 1; i >= 0; i--)
             {
                 var ing = recipeDto.Ingredients[i];
-                graphics.DrawString($"{ing.IngredientName} - {ing.Quantity} {ing.Unit}", font, XBrushes.Black, new XRect(10, -leftLineHeight, page.Width, page.Height), XStringFormats.BottomLeft);
+                graphics.DrawString($"{ing.IngredientName} {ing.Quantity} {ing.Unit}", font, XBrushes.Black, new XRect(10, -leftLineHeight, page.Width, page.Height), XStringFormats.BottomLeft);
                 leftLineHeight += 15;
             }
             graphics.DrawString($"Ingredients:", font, XBrushes.Black, new XRect(10, -leftLineHeight, page.Width, page.Height), XStringFormats.BottomLeft);
