@@ -366,3 +366,5 @@ FodyWeavers.xsd
 /CookingAssistantAPI/appsettings.Development.json
 /CookingAssistantAPI/Properties/launchSettings.json
 /CookingAssistantAPI/Properties/launchSettings.json
+/CookingAssistantAPI/recipes.db-shm
+/CookingAssistantAPI/recipes.db-wal
