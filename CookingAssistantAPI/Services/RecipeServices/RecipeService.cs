@@ -34,25 +34,18 @@ namespace CookingAssistantAPI.Services.RecipeServices
             var recipe = _mapper.Map<Recipe>(recipeDto);
             recipe.CreatedById = _userContext.UserId;
 
-            var nutrientData = recipe.RecipeNutrients
-                .Zip(recipeDto.NutrientQuantities, (recipeNutrient, quantity) => new { recipeNutrient, quantity })
-                .Zip(recipeDto.NutrientUnits, (pair, unit) => new { pair.recipeNutrient, pair.quantity, unit });
-
             var ingredientData = recipe.RecipeIngredients
                 .Zip(recipeDto.IngredientQuantities, (recipeIngredient, quantity) => new { recipeIngredient, quantity })
                 .Zip(recipeDto.IngredientUnits, (pair, unit) => new { pair.recipeIngredient, pair.quantity, unit });
 
-            foreach (var data in nutrientData)
-            {
-                data.recipeNutrient.Quantity = data.quantity;
-                data.recipeNutrient.Unit = data.unit;
-            }
-
+           
             foreach (var data in ingredientData)
             {
                 data.recipeIngredient.Quantity = data.quantity;
                 data.recipeIngredient.Unit = data.unit;
             }
+
+            recipe.CreatedDate = DateTime.Now;
 
             await _repository.AddRecipeAsync(recipe);
 
@@ -67,19 +60,9 @@ namespace CookingAssistantAPI.Services.RecipeServices
         {
             var recipe = _mapper.Map<Recipe>(recipeDto);
 
-            var nutrientData = recipe.RecipeNutrients
-               .Zip(recipeDto.NutrientQuantities, (recipeNutrient, quantity) => new { recipeNutrient, quantity })
-               .Zip(recipeDto.NutrientUnits, (pair, unit) => new { pair.recipeNutrient, pair.quantity, unit });
-
             var ingredientData = recipe.RecipeIngredients
                 .Zip(recipeDto.IngredientQuantities, (recipeIngredient, quantity) => new { recipeIngredient, quantity })
                 .Zip(recipeDto.IngredientUnits, (pair, unit) => new { pair.recipeIngredient, pair.quantity, unit });
-
-            foreach (var data in nutrientData)
-            {
-                data.recipeNutrient.Quantity = data.quantity;
-                data.recipeNutrient.Unit = data.unit;
-            }
 
             foreach (var data in ingredientData)
             {
@@ -110,9 +93,9 @@ namespace CookingAssistantAPI.Services.RecipeServices
 
             var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes);
 
-            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase);
+            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase, query.IngredientsSearch);
             recipeDtos = _recipeQueryService.SortRecipes(ref recipeDtos, query.SortBy, query.SortDirection);
-            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty);
+            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty, query.FilterByOccasion);
 
             return recipeDtos;
 
@@ -159,7 +142,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
 
             graphics.DrawString($"{recipeDto.Name}", fontBold, XBrushes.Black, new XRect(0, 10, page.Width, page.Height), XStringFormats.TopCenter);
             graphics.DrawString($"{recipeDto.AuthorName}", fontBold, XBrushes.Black, new XRect(15, 10, page.Width, page.Height), XStringFormats.TopLeft);
-            graphics.DrawString($"Difficulty: {recipeDto.Difficulty}", fontBold, XBrushes.Black, new XRect(-15, 10, page.Width, page.Height), XStringFormats.TopRight);
+            graphics.DrawString($"Difficulty: {recipeDto.DifficultyName}", fontBold, XBrushes.Black, new XRect(-15, 10, page.Width, page.Height), XStringFormats.TopRight);
             graphics.DrawString($"Serves: {recipeDto.Serves}", fontBold, XBrushes.Black, new XRect(-15, 25, page.Width, page.Height), XStringFormats.TopRight);
             graphics.DrawString($"Time to prepare: {recipeDto.TimeInMinutes}min", fontBold, XBrushes.Black, new XRect(-15, 40, page.Width, page.Height), XStringFormats.TopRight);
             var splittedDesc = SplitIntoEqualParts($"{recipeDto.Description}", 100);
@@ -193,15 +176,8 @@ namespace CookingAssistantAPI.Services.RecipeServices
                 leftLineHeight += 15;
             }
             graphics.DrawString($"Ingredients:", font, XBrushes.Black, new XRect(10, -leftLineHeight, page.Width, page.Height), XStringFormats.BottomLeft);
-
-            var rightLineHeight = 10;
-            for (int i = recipeDto.Nutrients.Count - 1; i >= 0; i--)
-            {
-                var nut = recipeDto.Nutrients[i];
-                graphics.DrawString($"{nut.NutrientName} - {nut.Quantity} {nut.Unit}", font, XBrushes.Black, new XRect(-10, -rightLineHeight, page.Width, page.Height), XStringFormats.BottomRight);
-                rightLineHeight += 15;
-            }
-            graphics.DrawString($"Nutrients:", font, XBrushes.Black, new XRect(-10, -rightLineHeight, page.Width, page.Height), XStringFormats.BottomRight);
+            
+            graphics.DrawString($"Caloricity: {recipeDto.Caloricity} kcal", font, XBrushes.Black, new XRect(-10, -10, page.Width, page.Height), XStringFormats.BottomRight);
 
             document.Save(stream, false);
 

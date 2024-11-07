@@ -3,6 +3,7 @@ using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Linq;
 
 namespace CookingAssistantAPI.Repositories.Reviews
@@ -67,7 +68,12 @@ namespace CookingAssistantAPI.Repositories.Reviews
         {
             var recipe = await GetRecipeById(recipeId);
 
-            // If no limit is specified, return all reviews
+            var userReviews = recipe.UsersReviews.ToList();
+            if (userReviews.IsNullOrEmpty())
+            {
+                throw new NotFoundException("Reviews not found for this recipe");
+            }
+
             return recipe.UsersReviews.ToList();
         }
         

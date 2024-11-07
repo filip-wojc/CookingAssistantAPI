@@ -1,6 +1,7 @@
 ﻿using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO.Recipes;
+using CookingAssistantAPI.DTO.Users;
 using CookingAssistantAPI.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +42,22 @@ namespace CookingAssistantAPI.Repositories.Users
         public async Task<bool> AddUserToDbAsync(User user)
         {
             await _context.Users.AddAsync(user);
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> ChangePasswordAsync(int? userId, UserPasswordChangeDTO dto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            user.PasswordHash = dto.NewPassword;
             if (await _context.SaveChangesAsync() > 0)
             {
                 return true;

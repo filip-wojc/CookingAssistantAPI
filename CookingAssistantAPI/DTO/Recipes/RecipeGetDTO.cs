@@ -1,5 +1,4 @@
 ﻿using CookingAssistantAPI.DTO.RecipeIngredients;
-using CookingAssistantAPI.DTO.RecipeNutrients;
 using CookingAssistantAPI.DTO.Steps;
 
 namespace CookingAssistantAPI.DTO.Recipes
@@ -13,11 +12,12 @@ namespace CookingAssistantAPI.DTO.Recipes
         public float Ratings { get; set; }
         public int TimeInMinutes { get; set; }
         public int Serves { get; set; }
-        public string? Difficulty { get; set; }
+        public string DifficultyName { get; set; }
         public int VoteCount { get; set; }
         public string CategoryName { get; set; }
+        public string OccasionName {  get; set; }
+        public int Caloricity { get; set; }
         public List<RecipeIngredientGetDTO>? Ingredients { get; set; }
-        public List<RecipeNutrientGetDTO>? Nutrients { get; set; }
         public List<StepGetDTO>? Steps { get; set; }
 
     }

@@ -95,9 +95,9 @@ namespace CookingAssistantAPI.Services.UserServices
             var recipes = await _repository.GetFavouriteRecipesAsync(_userContext.UserId);
             var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes);
 
-            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase);
+            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase, query.IngredientsSearch);
             recipeDtos = _recipeQueryService.SortRecipes(ref recipeDtos, query.SortBy, query.SortDirection);
-            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty);
+            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty, query.FilterByOccasion);
 
             return recipeDtos;
         }
@@ -134,6 +134,25 @@ namespace CookingAssistantAPI.Services.UserServices
         {
             var profilePicture = await _repository.GetProfilePictureAsync(_userContext.UserId);
             return profilePicture;
+        }
+
+        public async Task<bool> ChangeUserPassword(UserPasswordChangeDTO dto)
+        {
+            var user = await _repository.GetUserByEmailAsync(_userContext.Email);
+
+            var passwordVerification = _hasher.VerifyHashedPassword(user, user.PasswordHash, dto.OldPassword);
+            if (passwordVerification == PasswordVerificationResult.Failed)
+            {
+                throw new BadRequestException("Invalid old password");
+            }
+
+            dto.NewPassword = _hasher.HashPassword(user, dto.NewPassword);
+            if (await _repository.ChangePasswordAsync(_userContext.UserId, dto))
+            {
+                return true;
+            }
+            return false;
+
         }
     }
 }

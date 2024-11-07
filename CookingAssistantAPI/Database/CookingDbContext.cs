@@ -13,10 +13,10 @@ namespace CookingAssistantAPI.Database
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Step> Steps { get; set; }
-        public DbSet<Nutrient> Nutrients { get; set; }
         public DbSet<Category> Categories { get; set; } 
-        public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
-        public DbSet<RecipeNutrient> RecipeNutrients { get; set; }  
+        public DbSet<Difficulty> Difficulties { get; set; } 
+        public DbSet<Occasion> Occasions { get; set; } 
+        public DbSet<RecipeIngredient> RecipeIngredients { get; set; } 
         public DbSet<User> Users { get; set; }
         public DbSet<Review> Reviews { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,29 +37,11 @@ namespace CookingAssistantAPI.Database
                 .WithMany(i => i.RecipeIngredients)
                 .HasForeignKey(ri => ri.IngredientId);
 
-            // Many to Many relationship Recipe --- Nutrient
-            modelBuilder.Entity<RecipeNutrient>() // composite key
-                .HasKey(rn => new { rn.RecipeId, rn.NutrientId });
-
-            modelBuilder.Entity<RecipeNutrient>()
-                .HasOne(rn => rn.Recipe)
-                .WithMany(r => r.RecipeNutrients)
-                .HasForeignKey(rn => rn.RecipeId);
-
-            modelBuilder.Entity<RecipeNutrient>()
-                .HasOne(rn => rn.Nutrient)
-                .WithMany(n => n.RecipeNutrients)
-                .HasForeignKey(rn => rn.NutrientId);
 
             // Unique constraints
             modelBuilder.Entity<Ingredient>()
                 .HasIndex(i => i.IngredientName)
                 .IsUnique();
-
-            modelBuilder.Entity<Nutrient>()
-                .HasIndex(n => n.NutrientName)
-                .IsUnique();
-            
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.UserName)

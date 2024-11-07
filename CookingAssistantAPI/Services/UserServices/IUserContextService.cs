@@ -7,5 +7,6 @@ namespace CookingAssistantAPI.Services.UserServices
         ClaimsPrincipal User { get; }
         int? UserId { get; }
         string UserRole { get; }
+        string Email { get; }
     }
 }

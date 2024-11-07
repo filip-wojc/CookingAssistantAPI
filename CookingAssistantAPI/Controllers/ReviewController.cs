@@ -29,7 +29,7 @@ namespace CookingAssistantAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPost("{recipeId}/modify")]
+        [HttpPut("{recipeId}/modify")]
         public async Task<ActionResult> ModifyReview([FromRoute] int recipeId, [FromBody] ReviewCreateDTO dto)
         {
             if (await _service.ModifyReviewAsync(recipeId, dto))
