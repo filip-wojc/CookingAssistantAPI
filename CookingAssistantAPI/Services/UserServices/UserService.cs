@@ -104,7 +104,7 @@ namespace CookingAssistantAPI.Services.UserServices
 
         public async Task<bool> UploadProfilePicture(UploadFileDTO profilePicture)
         {
-            var profilePictureByteArray = _mapper.Map<byte[]>(profilePicture.formFile);
+            var profilePictureByteArray = _mapper.Map<byte[]>(profilePicture.imageData);
             if (await _repository.UploadProfilePicture(_userContext.UserId, profilePictureByteArray))
             {
                 return true;
