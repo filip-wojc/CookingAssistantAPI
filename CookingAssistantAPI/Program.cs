@@ -104,7 +104,7 @@ namespace CookingAssistantAPI
             });
 
             builder.Services.AddDbContext<CookingDbContext>(
-                o => o.UseSqlite("Data Source=recipes.db")
+                o => o.UseSqlite("Data Source=recipes_full.db")
                 );
 
             builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
