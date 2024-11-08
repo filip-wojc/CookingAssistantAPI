@@ -2,6 +2,7 @@
 using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO.RecipeIngredients;
 using CookingAssistantAPI.DTO.Recipes;
+using CookingAssistantAPI.DTO.Resources;
 using CookingAssistantAPI.DTO.Reviews;
 using CookingAssistantAPI.DTO.Steps;
 using CookingAssistantAPI.Tools.Converters;
@@ -13,6 +14,10 @@ namespace CookingAssistantAPI.Tools
         public AutoMapper()
         {
             CreateMap<IFormFile, byte[]>().ConvertUsing<FormFileToByteArrayConverter>();
+
+            CreateMap<Category, CategoriesGetDTO>();
+            CreateMap<Difficulty, DifficultiesGetDTO>();
+            CreateMap<Occasion, OccasionsGetDTO>();
 
             CreateMap<Step, StepGetDTO>();
             CreateMap<RecipeIngredient, RecipeIngredientGetDTO>()

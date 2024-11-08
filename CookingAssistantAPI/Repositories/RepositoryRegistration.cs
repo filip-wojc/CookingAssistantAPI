@@ -13,7 +13,7 @@ namespace CookingAssistantAPI.Repositories
             repositories.AddScoped<IRepositoryRecipe, RepositoryRecipe>();
             repositories.AddScoped<IRepositoryUser, RepositoryUser>();
             repositories.AddScoped<IRepositoryReview, RepositoryReview>();
-            repositories.AddScoped<IRepositoryIngredient, RepositoryIngredient>();
+            repositories.AddScoped<IRepositoryResources, RepositoryResources>();
         }
     }
 }
