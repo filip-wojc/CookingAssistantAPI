@@ -8,9 +8,8 @@ namespace CookingAssistantAPI.Tools
     {
         Ratings,
         TimeInMinutes,
-        DifficultyName,
+        Difficulty,
         VoteCount,
-        CategoryName,
         Caloricity
     }
 

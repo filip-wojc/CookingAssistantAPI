@@ -21,11 +21,9 @@ namespace CookingAssistantAPI.Controllers
     public class RecipeController : ControllerBase
     {
         private readonly IRecipeService _service;
-        private readonly IRecipePaginationService _paginationService;
-        public RecipeController(IRecipeService service, IReviewService reviewService, IRecipePaginationService paginationService)
+        public RecipeController(IRecipeService service, IReviewService reviewService)
         {
             _service = service;
-            _paginationService = paginationService;
         }
 
         [HttpPost]
@@ -66,14 +64,15 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet]
+        [ResponseCache(Duration = 1200, VaryByQueryKeys = new[] { "SearchPhrase", "IngredientsSearch", "FilterByDifficulty", "FilterByCategoryName", "FilterByOccasion", "PageNumber", "PageSize", "SortBy", "SortDirection" })]
         public async Task<ActionResult<PageResult<RecipeSimpleGetDTO>>> GetAllRecipes([FromQuery] RecipeQuery query)
         {
             var recipes = await _service.GetAllRecipesAsync(query);
-            var pageResult = _paginationService.GetPaginatedResult(query, recipes);
-            return Ok(pageResult);
+            return Ok(recipes);
         }
 
         [HttpGet("names")]
+        [ResponseCache(Duration = 1200)]
         public async Task<ActionResult<List<RecipeNamesGetDTO>>> GetAllRecipesNames()
         {
             var recipes = await _service.GetAllRecipesNamesAsync();

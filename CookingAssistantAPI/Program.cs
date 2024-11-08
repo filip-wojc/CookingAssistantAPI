@@ -114,6 +114,7 @@ namespace CookingAssistantAPI
             builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
+            app.UseResponseCaching();
             app.UseStaticFiles();
             app.UseExceptionHandler(_ => { });
 

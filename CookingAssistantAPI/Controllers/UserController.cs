@@ -17,11 +17,9 @@ namespace CookingAssistantAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
-        private readonly IRecipePaginationService _paginationService;
-        public UserController(IUserService service, IRecipePaginationService paginationService)
+        public UserController(IUserService service)
         {
             _service = service;
-            _paginationService = paginationService;
         }
 
         [HttpPost("register")]
@@ -66,12 +64,12 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("favourite-recipes")]
+        [ResponseCache(Duration = 1200, VaryByQueryKeys = new[] { "SearchPhrase", "IngredientsSearch", "FilterByDifficulty", "FilterByCategoryName", "FilterByOccasion", "PageNumber", "PageSize", "SortBy", "SortDirection" })]
         [Authorize]
         public async Task<ActionResult<PageResult<RecipeSimpleGetDTO>>> GetFavouriteRecipes([FromQuery] RecipeQuery query)
         {
             var favouriteRecipes = await _service.GetFavouriteRecipesAsync(query);
-            var pageResult = _paginationService.GetPaginatedResult(query, favouriteRecipes);
-            return Ok(pageResult);
+            return Ok(favouriteRecipes);
         }
 
         [HttpPost("image")]

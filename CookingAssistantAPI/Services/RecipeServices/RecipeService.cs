@@ -20,14 +20,11 @@ namespace CookingAssistantAPI.Services.RecipeServices
         private readonly IRepositoryRecipe _repository;
         private readonly IMapper _mapper;
         private readonly IUserContextService _userContext;
-        private readonly IRecipeQueryService _recipeQueryService;
-        public RecipeService(IRepositoryRecipe repository, IMapper mapper,
-            IUserContextService userContext, IRecipeQueryService recipeQueryService)
+        public RecipeService(IRepositoryRecipe repository, IMapper mapper, IUserContextService userContext)
         {
             _repository = repository;
             _mapper = mapper;
             _userContext = userContext;
-            _recipeQueryService = recipeQueryService;
         }
         public async Task<bool> AddRecipe(RecipeCreateDTO recipeDto)
         {
@@ -86,18 +83,13 @@ namespace CookingAssistantAPI.Services.RecipeServices
             return false;
         }
 
-        public async Task<List<RecipeSimpleGetDTO>> GetAllRecipesAsync(RecipeQuery query)
+        public async Task<PageResult<RecipeSimpleGetDTO>> GetAllRecipesAsync(RecipeQuery query)
         {
-            var recipes = await _repository.GetAllRecipesAsync();
+            var recipesWithNumber = await _repository.GetPaginatedRecipesAsync(query);
 
+            var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipesWithNumber.Item1);
 
-            var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes);
-
-            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase, query.IngredientsSearch);
-            recipeDtos = _recipeQueryService.SortRecipes(ref recipeDtos, query.SortBy, query.SortDirection);
-            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty, query.FilterByOccasion);
-
-            return recipeDtos;
+            return new PageResult<RecipeSimpleGetDTO>(recipeDtos, recipesWithNumber.Item2, query.PageSize ?? 10, query.PageNumber ?? 1);
 
         }
 

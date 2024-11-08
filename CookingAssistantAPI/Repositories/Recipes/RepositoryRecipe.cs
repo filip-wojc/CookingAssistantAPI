@@ -1,7 +1,7 @@
 ﻿using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Database.Models;
-using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.Exceptions;
+using CookingAssistantAPI.Tools;
 using Microsoft.EntityFrameworkCore;
 
 namespace CookingAssistantAPI.Repositories.Recipes
@@ -9,10 +9,13 @@ namespace CookingAssistantAPI.Repositories.Recipes
     public class RepositoryRecipe : IRepositoryRecipe
     {
         private CookingDbContext _context;
+
         public RepositoryRecipe(CookingDbContext context)
         {
             _context = context;
         }
+
+      
         public async Task AddRecipeAsync(Recipe recipe)
         {
             // Check and attach existing ingredients
@@ -103,10 +106,41 @@ namespace CookingAssistantAPI.Repositories.Recipes
             return recipe;
         }
 
+        public async Task<(List<Recipe>, int totalItems)> GetPaginatedRecipesAsync(RecipeQuery query)
+        {
+            var recipesQuery = _context.Recipes
+            .Include(r => r.Category)
+            .Include(r => r.Difficulty)
+            .Include(r => r.Occasion)
+            .Include(r => r.CreatedBy)
+            .Include(r => r.RecipeIngredients).ThenInclude(i => i.Ingredient)
+            .AsQueryable();
+
+            // Filtrowanie
+            recipesQuery = RecipeQueryProcessing.Filter(recipesQuery, query);
+
+            // Wyszukiwanie
+            recipesQuery = RecipeQueryProcessing.Search(recipesQuery, query);
+
+            // Sortowanie
+            recipesQuery = RecipeQueryProcessing.Sort(recipesQuery, query);
+
+            int totalItems = recipesQuery.Count();
+
+            // Paginacja
+            if (query.PageNumber.HasValue && query.PageSize.HasValue)
+            {
+                recipesQuery = recipesQuery
+                .Skip((query.PageNumber.Value - 1) * query.PageSize.Value)
+                    .Take(query.PageSize.Value);
+            }
+            
+            return (await recipesQuery.ToListAsync(), totalItems);
+        }
+
         public async Task<List<Recipe>> GetAllRecipesAsync()
         {
-            var recipes = await _context.Recipes.Include(r => r.Category).Include(r => r.Difficulty).Include(r => r.Occasion)
-                .Include(r => r.CreatedBy).Include(r => r.RecipeIngredients).ThenInclude(i => i.Ingredient).ToListAsync();
+            var recipes = await _context.Recipes.ToListAsync();
             return recipes;
         }
 
@@ -165,7 +199,8 @@ namespace CookingAssistantAPI.Repositories.Recipes
 
             return recipe;
         }
-       
+
+        
     }
 
 }

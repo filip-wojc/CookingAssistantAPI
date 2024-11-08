@@ -21,16 +21,14 @@ namespace CookingAssistantAPI.Services.UserServices
         private readonly IUserContextService _userContext;
         private readonly IPasswordHasher<User> _hasher;
         private readonly JwtParameters _jwtParameters;
-        private readonly IRecipeQueryService _recipeQueryService;
         private readonly IMapper _mapper;
         public UserService(IRepositoryUser repository, IPasswordHasher<User> hasher,
-            JwtParameters jwtParameters, IUserContextService userContext, IRecipeQueryService recipeQueryService, IMapper mapper)
+            JwtParameters jwtParameters, IUserContextService userContext, IMapper mapper)
         {
             _hasher = hasher;
             _repository = repository;
             _jwtParameters = jwtParameters;
             _userContext = userContext;
-            _recipeQueryService = recipeQueryService;
             _mapper = mapper;
         }
 
@@ -90,16 +88,11 @@ namespace CookingAssistantAPI.Services.UserServices
             return false;
         }
 
-        public async Task<List<RecipeSimpleGetDTO>> GetFavouriteRecipesAsync(RecipeQuery query)
+        public async Task<PageResult<RecipeSimpleGetDTO>> GetFavouriteRecipesAsync(RecipeQuery query)
         {
-            var recipes = await _repository.GetFavouriteRecipesAsync(_userContext.UserId);
-            var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes);
-
-            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase, query.IngredientsSearch);
-            recipeDtos = _recipeQueryService.SortRecipes(ref recipeDtos, query.SortBy, query.SortDirection);
-            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty, query.FilterByOccasion);
-
-            return recipeDtos;
+            var recipes = await _repository.GetPaginatedFavouriteRecipesAsync(_userContext.UserId, query);
+            var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes.Item1);
+            return new PageResult<RecipeSimpleGetDTO>(recipeDtos, recipes.Item2, query.PageSize ?? 10, query.PageNumber ?? 1);
         }
 
         public async Task<bool> UploadProfilePicture(UploadFileDTO profilePicture)

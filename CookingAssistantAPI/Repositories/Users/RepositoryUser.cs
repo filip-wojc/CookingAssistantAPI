@@ -3,6 +3,7 @@ using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.DTO.Users;
 using CookingAssistantAPI.Exceptions;
+using CookingAssistantAPI.Tools;
 using Microsoft.EntityFrameworkCore;
 
 namespace CookingAssistantAPI.Repositories.Users
@@ -65,14 +66,45 @@ namespace CookingAssistantAPI.Repositories.Users
             return false;
         }
 
-        public async Task<List<Recipe>> GetFavouriteRecipesAsync(int? userId)
+        public async Task<(List<Recipe>, int totalItems)> GetPaginatedFavouriteRecipesAsync(int? userId, RecipeQuery query)
         {
-            var user = await _context.Users.Include(u => u.FavouriteRecipes).ThenInclude(r => r.Category).FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await _context.Users.Include(u => u.FavouriteRecipes).FirstOrDefaultAsync(u => u.Id == userId);
             if (user is null)
             {
                 throw new NotFoundException("User not found");
             }
-            return user.FavouriteRecipes.ToList();
+
+            var favouriteRecipesIds = user.FavouriteRecipes.Select(u => u.Id).ToList();
+
+            var recipesQuery = _context.Recipes
+           .Include(r => r.Category)
+           .Include(r => r.Difficulty)
+           .Include(r => r.Occasion)
+           .Include(r => r.CreatedBy)
+           .Include(r => r.RecipeIngredients).ThenInclude(i => i.Ingredient)
+           .Where(r => favouriteRecipesIds.Contains(r.Id))
+           .AsQueryable();
+
+            // Filtrowanie
+            recipesQuery = RecipeQueryProcessing.Filter(recipesQuery, query);
+
+            // Wyszukiwanie
+            recipesQuery = RecipeQueryProcessing.Search(recipesQuery, query);
+
+            // Sortowanie
+            recipesQuery = RecipeQueryProcessing.Sort(recipesQuery, query);
+
+            int totalItems = recipesQuery.Count();
+
+            // Paginacja
+            if (query.PageNumber.HasValue && query.PageSize.HasValue)
+            {
+                recipesQuery = recipesQuery
+                .Skip((query.PageNumber.Value - 1) * query.PageSize.Value)
+                    .Take(query.PageSize.Value);
+            }
+
+            return (await recipesQuery.ToListAsync(), totalItems);
         }
 
         public async Task<byte[]> GetProfilePictureAsync(int? userId)

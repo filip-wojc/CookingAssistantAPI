@@ -15,6 +15,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("ingredients")]
+        [ResponseCache(Duration = 1200)]
         public async Task<ActionResult<List<string>>> GetAllIngredientNames()
         {
             var ingredients = await _service.GetAllIngredientsListAsync();
@@ -22,6 +23,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("difficulties")]
+        [ResponseCache(Duration = 1200)]
         public async Task<ActionResult<List<DifficultiesGetDTO>>> GetAllDifficulties()
         {
             var difficulties = await _service.GetAllDifficultiesAsync();
@@ -29,6 +31,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("occasions")]
+        [ResponseCache(Duration = 1200)]
         public async Task<ActionResult<List<OccasionsGetDTO>>> GetAllOccasions()
         {
             var occasions = await _service.GetAllOccasionsAsync();
@@ -36,6 +39,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("categories")]
+        [ResponseCache(Duration = 1200)]
         public async Task<ActionResult<List<CategoriesGetDTO>>> GetAllCategories()
         {
             var categories = await _service.GetAllCategoriesAsync();
