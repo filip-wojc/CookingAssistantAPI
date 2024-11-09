@@ -87,6 +87,13 @@ namespace CookingAssistantAPI.Services.UserServices
             return new PageResult<RecipeSimpleGetDTO>(recipeDtos, recipes.Item2, query.PageSize ?? 10, query.PageNumber ?? 1);
         }
 
+        public async Task<PageResult<RecipeSimpleGetDTO>> GetUserRecipesAsync(RecipeQuery query)
+        {
+            var recipes = await _repository.GetPaginatedUserRecipesAsync(_userContext.UserId, query);
+            var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes.Item1);
+            return new PageResult<RecipeSimpleGetDTO>(recipeDtos, recipes.Item2, query.PageSize ?? 10, query.PageNumber ?? 1);
+        }
+
         public async Task<bool> UploadProfilePicture(UploadFileDTO profilePicture)
         {
             var profilePictureByteArray = _mapper.Map<byte[]>(profilePicture.imageData);
@@ -134,5 +141,7 @@ namespace CookingAssistantAPI.Services.UserServices
         {
             return await _repository.IsRecipeInFavouritesAsync(_userContext.UserId, recipeId);
         }
+
+        
     }
 }

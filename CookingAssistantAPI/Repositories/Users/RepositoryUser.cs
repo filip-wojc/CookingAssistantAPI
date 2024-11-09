@@ -95,6 +95,47 @@ namespace CookingAssistantAPI.Repositories.Users
             return (await recipesQuery.ToListAsync(), totalItems);
         }
 
+        public async Task<(List<Recipe>, int totalItems)> GetPaginatedUserRecipesAsync(int? userId, RecipeQuery query)
+        {
+            var user = await _context.Users.Include(u => u.CreatedRecipes).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            var createdRecipesIds = user.CreatedRecipes.Select(u => u.Id).ToList();
+
+            var recipesQuery = _context.Recipes
+           .Include(r => r.Category)
+           .Include(r => r.Difficulty)
+           .Include(r => r.Occasion)
+           .Include(r => r.CreatedBy)
+           .Include(r => r.RecipeIngredients).ThenInclude(i => i.Ingredient)
+           .Where(r => createdRecipesIds.Contains(r.Id))
+           .AsQueryable();
+
+            // Filtrowanie
+            recipesQuery = RecipeQueryProcessing.Filter(recipesQuery, query);
+
+            // Wyszukiwanie
+            recipesQuery = RecipeQueryProcessing.Search(recipesQuery, query);
+
+            // Sortowanie
+            recipesQuery = RecipeQueryProcessing.Sort(recipesQuery, query);
+
+            int totalItems = recipesQuery.Count();
+
+            // Paginacja
+            if (query.PageNumber.HasValue && query.PageSize.HasValue)
+            {
+                recipesQuery = recipesQuery
+                .Skip((query.PageNumber.Value - 1) * query.PageSize.Value)
+                    .Take(query.PageSize.Value);
+            }
+
+            return (await recipesQuery.ToListAsync(), totalItems);
+        }
+
         public async Task<byte[]> GetProfilePictureAsync(int? userId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
@@ -177,6 +218,11 @@ namespace CookingAssistantAPI.Repositories.Users
             if (user is null)
             {
                 throw new NotFoundException("User not found");
+            }
+
+            if (user.ProfilePictureImageData == imageData)
+            {
+                throw new BadRequestException("You can't upload the same profile picture");
             }
 
             user.ProfilePictureImageData = imageData;

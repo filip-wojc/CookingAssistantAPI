@@ -71,6 +71,15 @@ namespace CookingAssistantAPI.Controllers
             return Ok(favouriteRecipes);
         }
 
+        [HttpGet("my-recipes")]
+        [ResponseCache(Duration = 1200, VaryByQueryKeys = new[] { "SearchPhrase", "IngredientsSearch", "FilterByDifficulty", "FilterByCategoryName", "FilterByOccasion", "PageNumber", "PageSize", "SortBy", "SortDirection" })]
+        [Authorize]
+        public async Task<ActionResult<PageResult<RecipeSimpleGetDTO>>> GetUserRecipes([FromQuery] RecipeQuery query)
+        {
+            var favouriteRecipes = await _service.GetUserRecipesAsync(query);
+            return Ok(favouriteRecipes);
+        }
+
         [HttpGet("favourite-recipes/{recipeId}/is-favourite")]
         [Authorize]
         public async Task<ActionResult> IsRecipeInFavourites([FromRoute] int recipeId)
@@ -97,9 +106,9 @@ namespace CookingAssistantAPI.Controllers
             return File(imageData, "image/jpeg");
         }
 
-        [HttpDelete("delete/{password}")]
+        [HttpDelete("delete")]
         [Authorize]
-        public async Task<ActionResult> DeleteUser([FromRoute] string password)
+        public async Task<ActionResult> DeleteUser([FromBody] string password)
         {
             if (await _service.DeleteUserAsync(password))
             {
