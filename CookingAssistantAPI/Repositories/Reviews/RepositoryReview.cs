@@ -91,12 +91,7 @@ namespace CookingAssistantAPI.Repositories.Reviews
                 throw new ForbidException("You can only delete your own reviews");
             }
             _context.Reviews.Remove(review);
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
-
+            return await _context.SaveChangesAsync() > 0;
         }
 
         private async Task<Recipe> GetRecipeById(int recipeId)

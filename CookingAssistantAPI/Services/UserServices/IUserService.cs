@@ -16,5 +16,6 @@ namespace CookingAssistantAPI.Services.UserServices
         Task<bool> RemoveRecipeFromFavouritesAsync(int recipeId);
         Task<byte[]> GetUserProfilePictureAsync();
         Task<bool> ChangeUserPassword(UserPasswordChangeDTO dto);
+        Task<bool> IsRecipeInFavouritesAsync(int recipeId);
     }
 }

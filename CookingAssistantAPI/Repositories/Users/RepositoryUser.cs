@@ -33,21 +33,13 @@ namespace CookingAssistantAPI.Repositories.Users
                 throw new ForbidException("You can't add the same recipe to favourites");
             }
             user.FavouriteRecipes?.Add(recipe);
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> AddUserToDbAsync(User user)
         {
             await _context.Users.AddAsync(user);
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> ChangePasswordAsync(int? userId, UserPasswordChangeDTO dto)
@@ -59,11 +51,7 @@ namespace CookingAssistantAPI.Repositories.Users
             }
 
             user.PasswordHash = dto.NewPassword;
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<(List<Recipe>, int totalItems)> GetPaginatedFavouriteRecipesAsync(int? userId, RecipeQuery query)
@@ -132,6 +120,21 @@ namespace CookingAssistantAPI.Repositories.Users
             return user;
         }
 
+        public async Task<bool> IsRecipeInFavouritesAsync(int? userId, int recipeId)
+        {
+            var user = await _context.Users.Include(u => u.FavouriteRecipes).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
+            if (recipe == null)
+            {
+                throw new NotFoundException("Recipe not found");
+            }
+            return user.FavouriteRecipes.Contains(recipe);
+        }
+
         public async Task<bool> RemoveRecipeFromFavouritesAsync(int?userId, int recipeId)
         {
             var user = await _context.Users.Include(u => u.FavouriteRecipes).FirstOrDefaultAsync(u => u.Id == userId);
@@ -177,12 +180,7 @@ namespace CookingAssistantAPI.Repositories.Users
             }
 
             user.ProfilePictureImageData = imageData;
-            if(await _context.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
-           
+            return await _context.SaveChangesAsync() > 0;
         }
        
     }

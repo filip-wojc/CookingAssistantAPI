@@ -46,11 +46,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
 
             await _repository.AddRecipeAsync(recipe);
 
-            if (await _repository.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
+            return await _repository.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> ModifyRecipeAsync(RecipeCreateDTO recipeDto, int recipeId)
@@ -67,20 +63,12 @@ namespace CookingAssistantAPI.Services.RecipeServices
                 data.recipeIngredient.Unit = data.unit;
             }
 
-            if (await _repository.ModifyRecipeAsync(recipe, recipeId, _userContext.UserId))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.ModifyRecipeAsync(recipe, recipeId, _userContext.UserId);
         }
 
         public async Task<bool> DeleteRecipeByIdAsync(int recipeId)
         {
-            if (await _repository.DeleteRecipeByIdAsync(recipeId, _userContext.UserId))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.DeleteRecipeByIdAsync(recipeId, _userContext.UserId);
         }
 
         public async Task<PageResult<RecipeSimpleGetDTO>> GetAllRecipesAsync(RecipeQuery query)

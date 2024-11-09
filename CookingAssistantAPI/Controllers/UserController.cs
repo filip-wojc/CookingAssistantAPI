@@ -72,6 +72,13 @@ namespace CookingAssistantAPI.Controllers
             return Ok(favouriteRecipes);
         }
 
+        [HttpGet("favourite-recipes/{recipeId}/is-favourite")]
+        [Authorize]
+        public async Task<ActionResult> IsRecipeInFavourites([FromRoute] int recipeId)
+        {
+            return Ok(await _service.IsRecipeInFavouritesAsync(recipeId));
+        }
+
         [HttpPost("image")]
         [Authorize]
         public async Task<ActionResult> AddProfilePicture([FromForm] UploadFileDTO profilePicture)

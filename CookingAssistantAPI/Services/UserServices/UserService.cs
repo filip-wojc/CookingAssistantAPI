@@ -42,11 +42,7 @@ namespace CookingAssistantAPI.Services.UserServices
             };
 
             newUser.PasswordHash = _hasher.HashPassword(newUser, dto.Password);
-            if(await _repository.AddUserToDbAsync(newUser))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.AddUserToDbAsync(newUser);
         }
 
         public async Task<string> GenerateToken(UserLoginDTO dto)
@@ -81,11 +77,7 @@ namespace CookingAssistantAPI.Services.UserServices
 
         public async Task<bool> AddRecipeToFavourites(int recipeId)
         {
-            if (await _repository.AddRecipeToFavourites(recipeId, _userContext.UserId))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.AddRecipeToFavourites(recipeId, _userContext.UserId);
         }
 
         public async Task<PageResult<RecipeSimpleGetDTO>> GetFavouriteRecipesAsync(RecipeQuery query)
@@ -98,11 +90,7 @@ namespace CookingAssistantAPI.Services.UserServices
         public async Task<bool> UploadProfilePicture(UploadFileDTO profilePicture)
         {
             var profilePictureByteArray = _mapper.Map<byte[]>(profilePicture.imageData);
-            if (await _repository.UploadProfilePicture(_userContext.UserId, profilePictureByteArray))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.UploadProfilePicture(_userContext.UserId, profilePictureByteArray);
         }
 
         public async Task<bool> DeleteUserAsync(string password)
@@ -114,20 +102,12 @@ namespace CookingAssistantAPI.Services.UserServices
                 throw new BadRequestException("Invalid password");
             }
 
-            if (await _repository.RemoveUserFromDbAsync(_userContext.UserId))
-            {
-                return true;
-            }      
-            return false;
+            return await _repository.RemoveUserFromDbAsync(_userContext.UserId);
         }
 
         public async Task<bool> RemoveRecipeFromFavouritesAsync(int recipeId)
         {
-            if (await _repository.RemoveRecipeFromFavouritesAsync(_userContext.UserId, recipeId))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.RemoveRecipeFromFavouritesAsync(_userContext.UserId, recipeId);      
         }
 
         public async Task<byte[]> GetUserProfilePictureAsync()
@@ -147,12 +127,12 @@ namespace CookingAssistantAPI.Services.UserServices
             }
 
             dto.NewPassword = _hasher.HashPassword(user, dto.NewPassword);
-            if (await _repository.ChangePasswordAsync(_userContext.UserId, dto))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.ChangePasswordAsync(_userContext.UserId, dto);
+        }
 
+        public async Task<bool> IsRecipeInFavouritesAsync(int recipeId)
+        {
+            return await _repository.IsRecipeInFavouritesAsync(_userContext.UserId, recipeId);
         }
     }
 }

@@ -27,22 +27,14 @@ namespace CookingAssistantAPI.Services.ReviewServices
             review.ReviewAuthorId = _userContext.UserId;
 
             await _repository.AddReviewAsync(recipeId, _userContext.UserId, review);
-            if (await _repository.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
+            return await _repository.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> ModifyReviewAsync(int recipeId, ReviewCreateDTO dto)
         {
             var review = _mapper.Map<Review>(dto);
             await _repository.ModifyReviewAsync(recipeId, _userContext.UserId, review);
-            if (await _repository.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
+            return await _repository.SaveChangesAsync() > 0;
         }
 
         public async Task<ReviewGetDTO> GetUserReview(int recipeId)
@@ -67,11 +59,7 @@ namespace CookingAssistantAPI.Services.ReviewServices
 
         public async Task<bool> DeleteReviewAsync(int recipeId)
         {
-            if (await _repository.DeleteReviewAsync(recipeId, _userContext.UserId))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.DeleteReviewAsync(recipeId, _userContext.UserId);
         }
     }
 }
