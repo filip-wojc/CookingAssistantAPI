@@ -154,7 +154,7 @@ namespace CookingAssistantAPI.Repositories.Users
             return result > 0;
         }
 
-        public async Task<bool> RemoveUserFromDbAsync(int? userId, string userName)
+        public async Task<bool> RemoveUserFromDbAsync(int? userId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
@@ -162,10 +162,7 @@ namespace CookingAssistantAPI.Repositories.Users
             {
                 throw new NotFoundException("User to delete not found");
             }
-            if (user.UserName != userName)
-            {
-                throw new ForbidException("Write your username before deleting an account");
-            }
+            
             var result = await _context.Users.Where(u => u.Id == userId).ExecuteDeleteAsync();
 
             return result > 0;

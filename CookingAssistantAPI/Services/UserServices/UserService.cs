@@ -105,12 +105,19 @@ namespace CookingAssistantAPI.Services.UserServices
             return false;
         }
 
-        public async Task<bool> DeleteUserAsync(string userName)
+        public async Task<bool> DeleteUserAsync(string password)
         {
-            if (await _repository.RemoveUserFromDbAsync(_userContext.UserId, userName))
+            var user = await _repository.GetUserByEmailAsync(_userContext.Email);
+            var passwordVerification = _hasher.VerifyHashedPassword(user, user.PasswordHash, password);
+            if (passwordVerification == PasswordVerificationResult.Failed)
+            {
+                throw new BadRequestException("Invalid password");
+            }
+
+            if (await _repository.RemoveUserFromDbAsync(_userContext.UserId))
             {
                 return true;
-            }
+            }      
             return false;
         }
 

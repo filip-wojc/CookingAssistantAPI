@@ -91,11 +91,11 @@ namespace CookingAssistantAPI.Controllers
             return File(imageData, "image/jpeg");
         }
 
-        [HttpDelete("delete/{userName}")]
+        [HttpDelete("delete/{password}")]
         [Authorize]
-        public async Task<ActionResult> DeleteUser([FromRoute] string userName)
+        public async Task<ActionResult> DeleteUser([FromRoute] string password)
         {
-            if (await _service.DeleteUserAsync(userName))
+            if (await _service.DeleteUserAsync(password))
             {
                 return NoContent();
             }
