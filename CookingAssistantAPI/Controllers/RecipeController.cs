@@ -72,6 +72,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("names")]
+        [AllowAnonymous]
         [ResponseCache(Duration = 1200)]
         public async Task<ActionResult<List<RecipeNamesGetDTO>>> GetAllRecipesNames()
         {
