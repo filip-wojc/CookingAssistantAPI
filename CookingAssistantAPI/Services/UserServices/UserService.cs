@@ -45,7 +45,7 @@ namespace CookingAssistantAPI.Services.UserServices
             return await _repository.AddUserToDbAsync(newUser);
         }
 
-        public async Task<string> GenerateToken(UserLoginDTO dto)
+        public async Task<LogInResponseDTO> GenerateToken(UserLoginDTO dto)
         {
             var user = await _repository.GetUserByEmailAsync(dto.Email);
 
@@ -71,7 +71,7 @@ namespace CookingAssistantAPI.Services.UserServices
                 expires: expires, signingCredentials: credentials);
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            return tokenHandler.WriteToken(token);
+            return new LogInResponseDTO {Token = tokenHandler.WriteToken(token), UserName = user.UserName};
 
         }
 

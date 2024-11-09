@@ -35,9 +35,8 @@ namespace CookingAssistantAPI.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> LoginUser([FromBody] UserLoginDTO user)
         {
-            string token = await _service.GenerateToken(user);
-            var response = new LogInResponseDTO { Token = token };
-            return Ok(response);
+            var loginResponse = await _service.GenerateToken(user);
+            return Ok(loginResponse);
         }
 
         [HttpPut("change-password")]
