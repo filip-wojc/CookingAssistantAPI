@@ -106,9 +106,9 @@ namespace CookingAssistantAPI.Controllers
             return File(imageData, "image/jpeg");
         }
 
-        [HttpDelete("delete")]
+        [HttpPost("delete")]
         [Authorize]
-        public async Task<ActionResult> DeleteUser([FromQuery] string password)
+        public async Task<ActionResult> DeleteUser([FromBody] string password)
         {
             if (await _service.DeleteUserAsync(password))
             {

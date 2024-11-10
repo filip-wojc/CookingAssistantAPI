@@ -38,8 +38,8 @@ namespace CookingAssistantAPI.Tools
             if (!string.IsNullOrEmpty(query.IngredientsSearch))
             {
                 var ingredients = query.IngredientsSearch.Split(',').Select(i => i.ToLower()).ToList();
-                recipesQuery = recipesQuery.Where(r =>
-                    r.RecipeIngredients.Any(i => ingredients.Contains(i.Ingredient.IngredientName.ToLower())));
+                recipesQuery = recipesQuery.Where(r => ingredients.All(ingredient => r.RecipeIngredients
+                                .Any(i => i.Ingredient.IngredientName.ToLower() == ingredient)));
             }
 
             if (!recipesQuery.Any())
