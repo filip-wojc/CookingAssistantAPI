@@ -108,7 +108,7 @@ namespace CookingAssistantAPI.Controllers
 
         [HttpDelete("delete")]
         [Authorize]
-        public async Task<ActionResult> DeleteUser([FromBody] string password)
+        public async Task<ActionResult> DeleteUser([FromQuery] string password)
         {
             if (await _service.DeleteUserAsync(password))
             {
