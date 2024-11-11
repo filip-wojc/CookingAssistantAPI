@@ -15,8 +15,8 @@ namespace CookingAssistantAPI.Tools.Validators
             RuleFor(u => u.UserName).NotEmpty().MinimumLength(5).MaximumLength(24).Must(IsUserNameUnique).WithMessage("Username is already taken").Must(IsValidValue);
             RuleFor(u => u.Password).NotEmpty()
                 .MinimumLength(5).MaximumLength(30)
-                .Matches(@"[A-Z]").WithMessage("Hasło musi mieć co najmniej jedną wielką literę")
-                .Matches(@"\d").WithMessage("Hasło musi zawierac co najmniej jedną cyfrę");
+                .Matches(@"[A-Z]").WithMessage("Password must have at least one capital letter")
+                .Matches(@"\d").WithMessage("Password must have at least one digit");
         }
         private bool IsValidValue(string value)
         {

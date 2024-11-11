@@ -9,8 +9,8 @@ namespace CookingAssistantAPI.Tools.Validators
         {
             RuleFor(u => u.NewPassword).NotEmpty()
                .MinimumLength(5).MaximumLength(30)
-               .Matches(@"[A-Z]").WithMessage("Hasło musi mieć co najmniej jedną wielką literę")
-               .Matches(@"\d").WithMessage("Hasło musi zawierac co najmniej jedną cyfrę");
+               .Matches(@"[A-Z]").WithMessage("Password must have at least one capital letter")
+               .Matches(@"\d").WithMessage("Password must have at least one digit");
 
             RuleFor(u => u).Must(u => u.NewPassword == u.NewPasswordConfirm).WithMessage("Passwords are not equal");
         }
