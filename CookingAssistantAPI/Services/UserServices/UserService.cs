@@ -100,10 +100,10 @@ namespace CookingAssistantAPI.Services.UserServices
             return await _repository.UploadProfilePicture(_userContext.UserId, profilePictureByteArray);
         }
 
-        public async Task<bool> DeleteUserAsync(string password)
+        public async Task<bool> DeleteUserAsync(PasswordDTO password)
         {
             var user = await _repository.GetUserByEmailAsync(_userContext.Email);
-            var passwordVerification = _hasher.VerifyHashedPassword(user, user.PasswordHash, password);
+            var passwordVerification = _hasher.VerifyHashedPassword(user, user.PasswordHash, password.Password);
             if (passwordVerification == PasswordVerificationResult.Failed)
             {
                 throw new BadRequestException("Invalid password");
