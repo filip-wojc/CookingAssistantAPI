@@ -21,16 +21,14 @@ namespace CookingAssistantAPI.Services.UserServices
         private readonly IUserContextService _userContext;
         private readonly IPasswordHasher<User> _hasher;
         private readonly JwtParameters _jwtParameters;
-        private readonly IRecipeQueryService _recipeQueryService;
         private readonly IMapper _mapper;
         public UserService(IRepositoryUser repository, IPasswordHasher<User> hasher,
-            JwtParameters jwtParameters, IUserContextService userContext, IRecipeQueryService recipeQueryService, IMapper mapper)
+            JwtParameters jwtParameters, IUserContextService userContext, IMapper mapper)
         {
             _hasher = hasher;
             _repository = repository;
             _jwtParameters = jwtParameters;
             _userContext = userContext;
-            _recipeQueryService = recipeQueryService;
             _mapper = mapper;
         }
 
@@ -44,14 +42,10 @@ namespace CookingAssistantAPI.Services.UserServices
             };
 
             newUser.PasswordHash = _hasher.HashPassword(newUser, dto.Password);
-            if(await _repository.AddUserToDbAsync(newUser))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.AddUserToDbAsync(newUser);
         }
 
-        public async Task<string> GenerateToken(UserLoginDTO dto)
+        public async Task<LogInResponseDTO> GenerateToken(UserLoginDTO dto)
         {
             var user = await _repository.GetUserByEmailAsync(dto.Email);
 
@@ -77,57 +71,50 @@ namespace CookingAssistantAPI.Services.UserServices
                 expires: expires, signingCredentials: credentials);
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            return tokenHandler.WriteToken(token);
+            return new LogInResponseDTO {Token = tokenHandler.WriteToken(token), UserName = user.UserName};
 
         }
 
         public async Task<bool> AddRecipeToFavourites(int recipeId)
         {
-            if (await _repository.AddRecipeToFavourites(recipeId, _userContext.UserId))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.AddRecipeToFavourites(recipeId, _userContext.UserId);
         }
 
-        public async Task<List<RecipeSimpleGetDTO>> GetFavouriteRecipesAsync(RecipeQuery query)
+        public async Task<PageResult<RecipeSimpleGetDTO>> GetFavouriteRecipesAsync(RecipeQuery query)
         {
-            var recipes = await _repository.GetFavouriteRecipesAsync(_userContext.UserId);
-            var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes);
+            var recipes = await _repository.GetPaginatedFavouriteRecipesAsync(_userContext.UserId, query);
+            var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes.Item1);
+            return new PageResult<RecipeSimpleGetDTO>(recipeDtos, recipes.Item2, query.PageSize ?? 10, query.PageNumber ?? 1);
+        }
 
-            recipeDtos = _recipeQueryService.SearchRecipes(ref recipeDtos, query.SearchPhrase);
-            recipeDtos = _recipeQueryService.SortRecipes(ref recipeDtos, query.SortBy, query.SortDirection);
-            recipeDtos = _recipeQueryService.RecipeFilter(ref recipeDtos, query.FilterByCategoryName, query.FilterByDifficulty);
-
-            return recipeDtos;
+        public async Task<PageResult<RecipeSimpleGetDTO>> GetUserRecipesAsync(RecipeQuery query)
+        {
+            var recipes = await _repository.GetPaginatedUserRecipesAsync(_userContext.UserId, query);
+            var recipeDtos = _mapper.Map<List<RecipeSimpleGetDTO>>(recipes.Item1);
+            return new PageResult<RecipeSimpleGetDTO>(recipeDtos, recipes.Item2, query.PageSize ?? 10, query.PageNumber ?? 1);
         }
 
         public async Task<bool> UploadProfilePicture(UploadFileDTO profilePicture)
         {
-            var profilePictureByteArray = _mapper.Map<byte[]>(profilePicture.formFile);
-            if (await _repository.UploadProfilePicture(_userContext.UserId, profilePictureByteArray))
-            {
-                return true;
-            }
-            return false;
+            var profilePictureByteArray = _mapper.Map<byte[]>(profilePicture.imageData);
+            return await _repository.UploadProfilePicture(_userContext.UserId, profilePictureByteArray);
         }
 
-        public async Task<bool> DeleteUserAsync(string userName)
+        public async Task<bool> DeleteUserAsync(string password)
         {
-            if (await _repository.RemoveUserFromDbAsync(_userContext.UserId, userName))
+            var user = await _repository.GetUserByEmailAsync(_userContext.Email);
+            var passwordVerification = _hasher.VerifyHashedPassword(user, user.PasswordHash, password);
+            if (passwordVerification == PasswordVerificationResult.Failed)
             {
-                return true;
+                throw new BadRequestException("Invalid password");
             }
-            return false;
+
+            return await _repository.RemoveUserFromDbAsync(_userContext.UserId);
         }
 
         public async Task<bool> RemoveRecipeFromFavouritesAsync(int recipeId)
         {
-            if (await _repository.RemoveRecipeFromFavouritesAsync(_userContext.UserId, recipeId))
-            {
-                return true;
-            }
-            return false;
+            return await _repository.RemoveRecipeFromFavouritesAsync(_userContext.UserId, recipeId);      
         }
 
         public async Task<byte[]> GetUserProfilePictureAsync()
@@ -147,12 +134,14 @@ namespace CookingAssistantAPI.Services.UserServices
             }
 
             dto.NewPassword = _hasher.HashPassword(user, dto.NewPassword);
-            if (await _repository.ChangePasswordAsync(_userContext.UserId, dto))
-            {
-                return true;
-            }
-            return false;
-
+            return await _repository.ChangePasswordAsync(_userContext.UserId, dto);
         }
+
+        public async Task<bool> IsRecipeInFavouritesAsync(int recipeId)
+        {
+            return await _repository.IsRecipeInFavouritesAsync(_userContext.UserId, recipeId);
+        }
+
+        
     }
 }

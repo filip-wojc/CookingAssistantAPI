@@ -2,6 +2,6 @@
 {
     public class UploadFileDTO
     {
-        public IFormFile? formFile {  get; set; }
+        public IFormFile? imageData {  get; set; }
     }
 }

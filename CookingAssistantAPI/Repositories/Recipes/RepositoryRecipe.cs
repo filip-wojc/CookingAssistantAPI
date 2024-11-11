@@ -1,7 +1,7 @@
 ﻿using CookingAssistantAPI.Database;
 using CookingAssistantAPI.Database.Models;
-using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.Exceptions;
+using CookingAssistantAPI.Tools;
 using Microsoft.EntityFrameworkCore;
 
 namespace CookingAssistantAPI.Repositories.Recipes
@@ -9,10 +9,13 @@ namespace CookingAssistantAPI.Repositories.Recipes
     public class RepositoryRecipe : IRepositoryRecipe
     {
         private CookingDbContext _context;
+
         public RepositoryRecipe(CookingDbContext context)
         {
             _context = context;
         }
+
+      
         public async Task AddRecipeAsync(Recipe recipe)
         {
             // Check and attach existing ingredients
@@ -29,23 +32,6 @@ namespace CookingAssistantAPI.Repositories.Recipes
                 {
                     // EF Core will track this as a new entity
                     _context.Ingredients.Add(recipeIngredient.Ingredient);
-                }
-            }
-
-            // Check and attach existing nutrients
-            foreach (var recipeNutrient in recipe.RecipeNutrients)
-            {
-                var existingNutrient = await _context.Nutrients
-                    .FirstOrDefaultAsync(n => n.NutrientName == recipeNutrient.Nutrient.NutrientName);
-
-                if (existingNutrient != null)
-                {
-                    recipeNutrient.Nutrient = existingNutrient;
-                }
-                else
-                {
-                    // EF Core will track this as a new entity
-                    _context.Nutrients.Add(recipeNutrient.Nutrient);
                 }
             }
 
@@ -87,29 +73,8 @@ namespace CookingAssistantAPI.Repositories.Recipes
                     _context.Ingredients.Add(recipeIngredient.Ingredient);
                 }
             }
-
-            // Check and attach existing nutrients
-            foreach (var recipeNutrient in recipe.RecipeNutrients)
-            {
-                var existingNutrient = await _context.Nutrients
-                    .FirstOrDefaultAsync(n => n.NutrientName == recipeNutrient.Nutrient.NutrientName);
-
-                if (existingNutrient != null)
-                {
-                    recipeNutrient.Nutrient = existingNutrient;
-                }
-                else
-                {
-                    // EF Core will track this as a new entity
-                    _context.Nutrients.Add(recipeNutrient.Nutrient);
-                }
-            }
-
-            recipeToModify.RecipeNutrients = recipe.RecipeNutrients;
-            recipeToModify.RecipeIngredients = recipe.RecipeIngredients;
-
             
-
+            recipeToModify.RecipeIngredients = recipe.RecipeIngredients;
             var result = await _context.SaveChangesAsync();
 
             return result > 0;
@@ -125,12 +90,12 @@ namespace CookingAssistantAPI.Repositories.Recipes
         {
             var recipe = await _context.Recipes
                 .Include(r => r.Category)
+                .Include(r => r.Difficulty)
+                .Include(r => r.Occasion)
                 .Include(r => r.CreatedBy)
                 .Include(r => r.Steps)
                 .Include(r => r.RecipeIngredients) // Include RecipeIngredients
                     .ThenInclude(ri => ri.Ingredient) // Then include the related Ingredient
-                .Include(r => r.RecipeNutrients) // Include RecipeNutrients
-                    .ThenInclude(rn => rn.Nutrient) // Then include the related Nutrient
                 .FirstOrDefaultAsync(r => r.Name == recipeName);
 
             if (recipe is null)
@@ -141,10 +106,41 @@ namespace CookingAssistantAPI.Repositories.Recipes
             return recipe;
         }
 
+        public async Task<(List<Recipe>, int totalItems)> GetPaginatedRecipesAsync(RecipeQuery query)
+        {
+            var recipesQuery = _context.Recipes
+            .Include(r => r.Category)
+            .Include(r => r.Difficulty)
+            .Include(r => r.Occasion)
+            .Include(r => r.CreatedBy)
+            .Include(r => r.RecipeIngredients).ThenInclude(i => i.Ingredient)
+            .AsQueryable();
+
+            // Filtrowanie
+            recipesQuery = RecipeQueryProcessing.Filter(recipesQuery, query);
+
+            // Wyszukiwanie
+            recipesQuery = RecipeQueryProcessing.Search(recipesQuery, query);
+
+            // Sortowanie
+            recipesQuery = RecipeQueryProcessing.Sort(recipesQuery, query);
+
+            int totalItems = recipesQuery.Count();
+
+            // Paginacja
+            if (query.PageNumber.HasValue && query.PageSize.HasValue)
+            {
+                recipesQuery = recipesQuery
+                .Skip((query.PageNumber.Value - 1) * query.PageSize.Value)
+                    .Take(query.PageSize.Value);
+            }
+            
+            return (await recipesQuery.ToListAsync(), totalItems);
+        }
+
         public async Task<List<Recipe>> GetAllRecipesAsync()
         {
-            var recipes = await _context.Recipes.Include(r => r.Category)
-                .Include(r => r.CreatedBy).ToListAsync();
+            var recipes = await _context.Recipes.ToListAsync();
             return recipes;
         }
 
@@ -188,12 +184,12 @@ namespace CookingAssistantAPI.Repositories.Recipes
         {
             var recipe = await _context.Recipes
                 .Include(r => r.Category)
+                .Include(r => r.Difficulty)
+                .Include(r => r.Occasion)
                 .Include(r => r.CreatedBy)
                 .Include(r => r.Steps)
                 .Include(r => r.RecipeIngredients) // Include RecipeIngredients
                     .ThenInclude(ri => ri.Ingredient) // Then include the related Ingredient
-                .Include(r => r.RecipeNutrients) // Include RecipeNutrients
-                    .ThenInclude(rn => rn.Nutrient) // Then include the related Nutrient
                 .FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe is null)
@@ -203,7 +199,8 @@ namespace CookingAssistantAPI.Repositories.Recipes
 
             return recipe;
         }
-       
+
+        
     }
 
 }

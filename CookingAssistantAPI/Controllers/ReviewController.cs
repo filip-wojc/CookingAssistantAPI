@@ -61,6 +61,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("{recipeId}")]
+        [ResponseCache(Duration = 1200)]
         public async Task<ActionResult<List<ReviewGetDTO>>> GetRecipeReviews([FromRoute] int recipeId)
         {
             var reviews = await _service.GetReviewsAsync(recipeId);

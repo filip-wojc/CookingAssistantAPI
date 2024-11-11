@@ -3,6 +3,7 @@ using CookingAssistantAPI.Database.Models;
 using CookingAssistantAPI.DTO.Recipes;
 using CookingAssistantAPI.DTO.Users;
 using CookingAssistantAPI.Exceptions;
+using CookingAssistantAPI.Tools;
 using Microsoft.EntityFrameworkCore;
 
 namespace CookingAssistantAPI.Repositories.Users
@@ -32,21 +33,13 @@ namespace CookingAssistantAPI.Repositories.Users
                 throw new ForbidException("You can't add the same recipe to favourites");
             }
             user.FavouriteRecipes?.Add(recipe);
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> AddUserToDbAsync(User user)
         {
             await _context.Users.AddAsync(user);
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> ChangePasswordAsync(int? userId, UserPasswordChangeDTO dto)
@@ -58,21 +51,89 @@ namespace CookingAssistantAPI.Repositories.Users
             }
 
             user.PasswordHash = dto.NewPassword;
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            return false;
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<List<Recipe>> GetFavouriteRecipesAsync(int? userId)
+        public async Task<(List<Recipe>, int totalItems)> GetPaginatedFavouriteRecipesAsync(int? userId, RecipeQuery query)
         {
-            var user = await _context.Users.Include(u => u.FavouriteRecipes).ThenInclude(r => r.Category).FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await _context.Users.Include(u => u.FavouriteRecipes).FirstOrDefaultAsync(u => u.Id == userId);
             if (user is null)
             {
                 throw new NotFoundException("User not found");
             }
-            return user.FavouriteRecipes.ToList();
+
+            var favouriteRecipesIds = user.FavouriteRecipes.Select(u => u.Id).ToList();
+
+            var recipesQuery = _context.Recipes
+           .Include(r => r.Category)
+           .Include(r => r.Difficulty)
+           .Include(r => r.Occasion)
+           .Include(r => r.CreatedBy)
+           .Include(r => r.RecipeIngredients).ThenInclude(i => i.Ingredient)
+           .Where(r => favouriteRecipesIds.Contains(r.Id))
+           .AsQueryable();
+
+            // Filtrowanie
+            recipesQuery = RecipeQueryProcessing.Filter(recipesQuery, query);
+
+            // Wyszukiwanie
+            recipesQuery = RecipeQueryProcessing.Search(recipesQuery, query);
+
+            // Sortowanie
+            recipesQuery = RecipeQueryProcessing.Sort(recipesQuery, query);
+
+            int totalItems = recipesQuery.Count();
+
+            // Paginacja
+            if (query.PageNumber.HasValue && query.PageSize.HasValue)
+            {
+                recipesQuery = recipesQuery
+                .Skip((query.PageNumber.Value - 1) * query.PageSize.Value)
+                    .Take(query.PageSize.Value);
+            }
+
+            return (await recipesQuery.ToListAsync(), totalItems);
+        }
+
+        public async Task<(List<Recipe>, int totalItems)> GetPaginatedUserRecipesAsync(int? userId, RecipeQuery query)
+        {
+            var user = await _context.Users.Include(u => u.CreatedRecipes).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            var createdRecipesIds = user.CreatedRecipes.Select(u => u.Id).ToList();
+
+            var recipesQuery = _context.Recipes
+           .Include(r => r.Category)
+           .Include(r => r.Difficulty)
+           .Include(r => r.Occasion)
+           .Include(r => r.CreatedBy)
+           .Include(r => r.RecipeIngredients).ThenInclude(i => i.Ingredient)
+           .Where(r => createdRecipesIds.Contains(r.Id))
+           .AsQueryable();
+
+            // Filtrowanie
+            recipesQuery = RecipeQueryProcessing.Filter(recipesQuery, query);
+
+            // Wyszukiwanie
+            recipesQuery = RecipeQueryProcessing.Search(recipesQuery, query);
+
+            // Sortowanie
+            recipesQuery = RecipeQueryProcessing.Sort(recipesQuery, query);
+
+            int totalItems = recipesQuery.Count();
+
+            // Paginacja
+            if (query.PageNumber.HasValue && query.PageSize.HasValue)
+            {
+                recipesQuery = recipesQuery
+                .Skip((query.PageNumber.Value - 1) * query.PageSize.Value)
+                    .Take(query.PageSize.Value);
+            }
+
+            return (await recipesQuery.ToListAsync(), totalItems);
         }
 
         public async Task<byte[]> GetProfilePictureAsync(int? userId)
@@ -100,6 +161,21 @@ namespace CookingAssistantAPI.Repositories.Users
             return user;
         }
 
+        public async Task<bool> IsRecipeInFavouritesAsync(int? userId, int recipeId)
+        {
+            var user = await _context.Users.Include(u => u.FavouriteRecipes).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
+            if (recipe == null)
+            {
+                throw new NotFoundException("Recipe not found");
+            }
+            return user.FavouriteRecipes.Contains(recipe);
+        }
+
         public async Task<bool> RemoveRecipeFromFavouritesAsync(int?userId, int recipeId)
         {
             var user = await _context.Users.Include(u => u.FavouriteRecipes).FirstOrDefaultAsync(u => u.Id == userId);
@@ -122,7 +198,7 @@ namespace CookingAssistantAPI.Repositories.Users
             return result > 0;
         }
 
-        public async Task<bool> RemoveUserFromDbAsync(int? userId, string userName)
+        public async Task<bool> RemoveUserFromDbAsync(int? userId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
@@ -130,10 +206,7 @@ namespace CookingAssistantAPI.Repositories.Users
             {
                 throw new NotFoundException("User to delete not found");
             }
-            if (user.UserName != userName)
-            {
-                throw new ForbidException("Write your username before deleting an account");
-            }
+            
             var result = await _context.Users.Where(u => u.Id == userId).ExecuteDeleteAsync();
 
             return result > 0;
@@ -147,13 +220,13 @@ namespace CookingAssistantAPI.Repositories.Users
                 throw new NotFoundException("User not found");
             }
 
-            user.ProfilePictureImageData = imageData;
-            if(await _context.SaveChangesAsync() > 0)
+            if (user.ProfilePictureImageData == imageData)
             {
-                return true;
+                throw new BadRequestException("You can't upload the same profile picture");
             }
-            return false;
-           
+
+            user.ProfilePictureImageData = imageData;
+            return await _context.SaveChangesAsync() > 0;
         }
        
     }
