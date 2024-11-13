@@ -22,6 +22,14 @@ namespace CookingAssistantAPI.Controllers
             return Ok(ingredients);
         }
 
+        [HttpGet("units")]
+        [ResponseCache(Duration = 1200)]
+        public async Task<ActionResult<List<string>>> GetAllUnitNames()
+        {
+            var units = await _service.GetAllUnitsListAsync();
+            return Ok(units);
+        }
+
         [HttpGet("difficulties")]
         [ResponseCache(Duration = 1200)]
         public async Task<ActionResult<List<DifficultiesGetDTO>>> GetAllDifficulties()

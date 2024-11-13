@@ -36,5 +36,10 @@ namespace CookingAssistantAPI.Services.IngredientServices
             var occasions = await _repository.GetAllOccasionsListAsync();
             return _mapper.Map<List<OccasionsGetDTO>>(occasions);
         }
+
+        public async Task<List<string>> GetAllUnitsListAsync()
+        {
+            return await _repository.GetAllUnitsListAsync();
+        }
     }
 }
