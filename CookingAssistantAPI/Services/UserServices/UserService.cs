@@ -142,6 +142,9 @@ namespace CookingAssistantAPI.Services.UserServices
             return await _repository.IsRecipeInFavouritesAsync(_userContext.UserId, recipeId);
         }
 
-        
+        public async Task<bool> IsRecipeCreatedByUserAsync(int recipeId)
+        {
+            return await _repository.IsRecipeCreatedByUserAsync(_userContext.UserId, recipeId);
+        }
     }
 }

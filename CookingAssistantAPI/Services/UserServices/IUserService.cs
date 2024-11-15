@@ -18,5 +18,6 @@ namespace CookingAssistantAPI.Services.UserServices
         Task<byte[]> GetUserProfilePictureAsync();
         Task<bool> ChangeUserPassword(UserPasswordChangeDTO dto);
         Task<bool> IsRecipeInFavouritesAsync(int recipeId);
+        Task<bool> IsRecipeCreatedByUserAsync(int recipeId);
     }
 }
