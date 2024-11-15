@@ -88,11 +88,10 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("pdf/{recipeId}")]
-        [AllowAnonymous]
         public async Task<ActionResult> GeneratePdf([FromRoute] int recipeId)
         {
             var pdfStream = await _service.GetRecipePdf(recipeId);
-            return File(pdfStream.ToArray(), "application/pdf","generated.pdf");
+            return File(pdfStream.ToArray(), "application/pdf",$"recipe_{recipeId}.pdf");
         }
 
     }

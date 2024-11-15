@@ -88,7 +88,7 @@ namespace CookingAssistantAPI.Controllers
         }
 
 
-        [HttpGet("favourite-recipes/{recipeId}/is-mine")]
+        [HttpGet("recipes/{recipeId}/is-mine")]
         [Authorize]
         public async Task<ActionResult> IsRecipeCreatedByUser([FromRoute] int recipeId)
         {
