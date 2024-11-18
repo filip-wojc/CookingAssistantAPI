@@ -8,6 +8,7 @@ namespace CookingAssistantAPI.Services.RecipeServices
     {
         Task<bool> AddRecipe(RecipeCreateDTO recipeDto);
         Task<RecipeGetDTO> GetRecipeByIdAsync(int recipeId);
+        Task<RecipeGetDTO> GetRandomRecipeByDate();
         Task<RecipeGetDTO> GetRecipeByNameAsync(string recipeName);
         Task<PageResult<RecipeSimpleGetDTO>> GetAllRecipesAsync(RecipeQuery query);
         Task<List<RecipeNamesGetDTO>> GetAllRecipesNamesAsync();

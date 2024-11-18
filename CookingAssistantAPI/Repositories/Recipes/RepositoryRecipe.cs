@@ -188,8 +188,8 @@ namespace CookingAssistantAPI.Repositories.Recipes
                 .Include(r => r.Occasion)
                 .Include(r => r.CreatedBy)
                 .Include(r => r.Steps)
-                .Include(r => r.RecipeIngredients) // Include RecipeIngredients
-                    .ThenInclude(ri => ri.Ingredient) // Then include the related Ingredient
+                .Include(r => r.RecipeIngredients)
+                    .ThenInclude(ri => ri.Ingredient)
                 .FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe is null)
@@ -200,7 +200,38 @@ namespace CookingAssistantAPI.Repositories.Recipes
             return recipe;
         }
 
-        
+        public async Task<Recipe> GetRandomRecipePerDyAsync()
+        {
+            var currentDate = DateTime.UtcNow.Date;
+            var currentRecipeIds = await _context.Recipes.Select(r => r.Id).ToListAsync();
+
+            if (!currentRecipeIds.Any())
+            {
+                throw new NotFoundException("No recipes found in database");
+            }
+
+            int hash = currentDate.GetHashCode();
+            int index = Math.Abs(hash) % currentRecipeIds.Count;
+
+            var randomId = currentRecipeIds[index];
+
+            var recipe = await _context.Recipes
+                .Include(r => r.Category)
+                .Include(r => r.Difficulty)
+                .Include(r => r.Occasion)
+                .Include(r => r.CreatedBy)
+                .Include(r => r.Steps)
+                .Include(r => r.RecipeIngredients)
+                    .ThenInclude(ri => ri.Ingredient)
+                .FirstOrDefaultAsync(r => r.Id == randomId);
+
+            if (recipe is null)
+            {
+                throw new NotFoundException("Recipe not found");
+            }
+
+            return recipe;
+        }
     }
 
 }
