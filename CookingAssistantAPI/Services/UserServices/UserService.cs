@@ -71,7 +71,7 @@ namespace CookingAssistantAPI.Services.UserServices
                 expires: expires, signingCredentials: credentials);
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            return new LogInResponseDTO {Token = tokenHandler.WriteToken(token), UserName = user.UserName};
+            return new LogInResponseDTO {Token = tokenHandler.WriteToken(token), UserName = user.UserName, Email = user.Email};
 
         }
 
