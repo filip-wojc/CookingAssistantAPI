@@ -63,6 +63,14 @@ namespace CookingAssistantAPI.Controllers
             return Ok(recipe);
         }
 
+        [HttpGet("daily-recipe")]
+        public async Task<ActionResult<RecipeGetDTO>> GetDailyRecipe()
+        {
+            var recipe = await _service.GetRandomRecipeByDate();
+            return Ok(recipe);
+        }
+
+
         [HttpGet]
         [ResponseCache(Duration = 1200, VaryByQueryKeys = new[] { "SearchPhrase", "IngredientsSearch", "FilterByDifficulty", "FilterByCategoryName", "FilterByOccasion", "PageNumber", "PageSize", "SortBy", "SortDirection" })]
         public async Task<ActionResult<PageResult<RecipeSimpleGetDTO>>> GetAllRecipes([FromQuery] RecipeQuery query)
@@ -88,11 +96,10 @@ namespace CookingAssistantAPI.Controllers
         }
 
         [HttpGet("pdf/{recipeId}")]
-        [AllowAnonymous]
         public async Task<ActionResult> GeneratePdf([FromRoute] int recipeId)
         {
             var pdfStream = await _service.GetRecipePdf(recipeId);
-            return File(pdfStream.ToArray(), "application/pdf","generated.pdf");
+            return File(pdfStream.ToArray(), "application/pdf",$"recipe_{recipeId}.pdf");
         }
 
     }

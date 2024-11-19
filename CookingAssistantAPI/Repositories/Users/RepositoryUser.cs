@@ -161,6 +161,21 @@ namespace CookingAssistantAPI.Repositories.Users
             return user;
         }
 
+        public async Task<bool> IsRecipeCreatedByUserAsync(int? userId, int recipeId)
+        {
+            var user = await _context.Users.Include(u => u.CreatedRecipes).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
+            if (recipe == null)
+            {
+                throw new NotFoundException("Recipe not found");
+            }
+            return user.CreatedRecipes.Contains(recipe);
+        }
+
         public async Task<bool> IsRecipeInFavouritesAsync(int? userId, int recipeId)
         {
             var user = await _context.Users.Include(u => u.FavouriteRecipes).FirstOrDefaultAsync(u => u.Id == userId);

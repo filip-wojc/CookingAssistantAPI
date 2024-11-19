@@ -87,6 +87,14 @@ namespace CookingAssistantAPI.Controllers
             return Ok(await _service.IsRecipeInFavouritesAsync(recipeId));
         }
 
+
+        [HttpGet("recipes/{recipeId}/is-mine")]
+        [Authorize]
+        public async Task<ActionResult> IsRecipeCreatedByUser([FromRoute] int recipeId)
+        {
+            return Ok(await _service.IsRecipeCreatedByUserAsync(recipeId));
+        }
+
         [HttpPost("image")]
         [Authorize]
         public async Task<ActionResult> AddProfilePicture([FromForm] UploadFileDTO profilePicture)
@@ -108,9 +116,9 @@ namespace CookingAssistantAPI.Controllers
 
         [HttpPost("delete")]
         [Authorize]
-        public async Task<ActionResult> DeleteUser([FromBody] string password)
+        public async Task<ActionResult> DeleteUser([FromBody] PasswordDTO dto)
         {
-            if (await _service.DeleteUserAsync(password))
+            if (await _service.DeleteUserAsync(dto))
             {
                 return NoContent();
             }

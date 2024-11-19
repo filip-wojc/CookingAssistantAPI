@@ -58,5 +58,16 @@ namespace CookingAssistantAPI.Repositories.Ingredients
             }
             return occasions;
         }
+
+        public async Task<List<string>> GetAllUnitsListAsync()
+        {
+            var recipeIngredients = await _context.RecipeIngredients.ToListAsync();
+            var units = recipeIngredients.Select(r => r.Unit).ToHashSet().ToList();
+            if (units.IsNullOrEmpty())
+            {
+                throw new NotFoundException("Units not found");
+            }
+            return units;
+        }
     }
 }

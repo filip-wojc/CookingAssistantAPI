@@ -99,6 +99,12 @@ namespace CookingAssistantAPI.Services.RecipeServices
             return _mapper.Map<RecipeGetDTO>(recipe);
         }
 
+        public async Task<RecipeGetDTO> GetRandomRecipeByDate()
+        {
+            var recipe = await _repository.GetRandomRecipePerDyAsync();
+            return _mapper.Map<RecipeGetDTO>(recipe);
+        }
+
         public async Task<byte[]> GetRecipeImageAsync(int recipeId)
         {
             var image = await _repository.GetRecipeImageAsync(recipeId);
@@ -188,5 +194,6 @@ namespace CookingAssistantAPI.Services.RecipeServices
             return result;
         }
 
+      
     }
 }
