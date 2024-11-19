@@ -74,7 +74,6 @@ namespace CookingAssistantAPI
                 };
             });
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -104,7 +103,7 @@ namespace CookingAssistantAPI
             });
 
             builder.Services.AddDbContext<CookingDbContext>(
-                o => o.UseSqlite("Data Source=recipes_full.db")
+                o => o.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
                 );
 
             builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
@@ -121,13 +120,12 @@ namespace CookingAssistantAPI
             app.UseHttpLogging();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+           
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
