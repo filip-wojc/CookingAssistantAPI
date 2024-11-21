@@ -50,35 +50,62 @@ namespace CookingAssistantAPI.Repositories.Recipes
             }
 
             recipeToModify.ImageData = recipe.ImageData;
-            recipeToModify.Steps = recipe.Steps;
+
             recipeToModify.Serves = recipe.Serves;
             recipeToModify.Description = recipe.Description;
             recipeToModify.Name = recipe.Name;
-            recipeToModify.Difficulty = recipe.Difficulty;
+            recipeToModify.DifficultyId = recipe.DifficultyId;
+            recipeToModify.OccasionId = recipe.OccasionId;
+            recipeToModify.CategoryId = recipe.CategoryId;
             recipeToModify.TimeInMinutes = recipe.TimeInMinutes;
             recipeToModify.ModificationDate = DateTime.Now;
 
-            foreach (var recipeIngredient in recipe.RecipeIngredients)
-            {
-                var existingIngredient = await _context.Ingredients
-                    .FirstOrDefaultAsync(i => i.IngredientName == recipeIngredient.Ingredient.IngredientName);
+            // Update Steps
+            UpdateSteps(recipeToModify, recipe.Steps);
 
-                if (existingIngredient != null)
-                {
-                    recipeIngredient.Ingredient = existingIngredient;
-                }
-                else
-                {
-                    // EF Core will track this as a new entity
-                    _context.Ingredients.Add(recipeIngredient.Ingredient);
-                }
-            }
             
-            recipeToModify.RecipeIngredients = recipe.RecipeIngredients;
+            await UpdateRecipeIngredientsAsync(recipeToModify, recipe.RecipeIngredients);
+
             var result = await _context.SaveChangesAsync();
 
             return result > 0;
+        }
 
+        private void UpdateSteps(Recipe recipeToModify, ICollection<Step> newSteps)
+        {
+            // clear old steps
+            recipeToModify.Steps.Clear();
+
+            // add new steps
+            foreach (var step in newSteps)
+            {
+                recipeToModify.Steps.Add(step);
+            }
+        }
+
+        private async Task UpdateRecipeIngredientsAsync(Recipe recipeToModify, ICollection<RecipeIngredient> newRecipeIngredients)
+        {
+            // clear old ingredients
+            recipeToModify.RecipeIngredients.Clear();
+
+            foreach (var newIngredient in newRecipeIngredients)
+            {
+                var existingIngredient = await _context.Ingredients
+                    .FirstOrDefaultAsync(i => i.IngredientName == newIngredient.Ingredient.IngredientName);
+
+                if (existingIngredient != null)
+                {
+                    // if exists, bind
+                    newIngredient.Ingredient = existingIngredient;
+                }
+                else
+                {
+                    // add ingredient if doesn't exist
+                    _context.Ingredients.Add(newIngredient.Ingredient);
+                }
+
+                recipeToModify.RecipeIngredients.Add(newIngredient);
+            }
         }
 
         public async Task<Recipe> GetRecipeByIdAsync(int recipeId)
