@@ -31,7 +31,7 @@ namespace CookingAssistantAPI.Controllers
         {
             if (await _service.AddRecipe(recipeDto))
             {
-                return Created();
+                return Created("Recipe created", new {message="Recipe Created"});
             }
             return BadRequest();
         }

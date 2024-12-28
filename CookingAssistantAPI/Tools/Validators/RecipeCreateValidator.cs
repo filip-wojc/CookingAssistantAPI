@@ -44,31 +44,26 @@ namespace CookingAssistantAPI.Tools.Validators
             RuleFor(r => r.DifficultyId).Must(DifficultyExists)
                 .WithMessage("This difficulty does not exist");
 
-            RuleFor(r => r.ImageData)
-                .NotNull().WithMessage("Image data is required")
-                .NotEmpty().WithMessage("Image data cannot be empty");
-
         }
 
         private bool IsValidValues(IEnumerable<string?> values)
         {
-            // Znaki specjalne do zablokowania
-            string[] specialChars = { "\\" };
-            var nullPattern = @"\bnull\b|\bNULL\b"; // Zablokuje samodzielne wystąpienia "null" i "NULL"
+            if (values == null || !values.Any())
+                return false; // Zablokuj puste listy
+
+            string[] specialChars = { "\\", "\n", "\t" }; // Dodano więcej znaków
+            var nullPattern = @"\bnull\b|\bNULL\b";
 
             foreach (var value in values)
             {
-                // Sprawdź, czy wartość zawiera którykolwiek ze specjalnych znaków
-                if (specialChars.Any(value.Contains))
-                {
-                    return false;
-                }
+                if (string.IsNullOrWhiteSpace(value))
+                    return false; // Zablokuj puste lub białe znaki
 
-                // Sprawdź, czy wartość zawiera słowo "null" jako osobne słowo
+                if (specialChars.Any(c => value.Contains(c)))
+                    return false; // Zablokuj znaki specjalne
+
                 if (System.Text.RegularExpressions.Regex.IsMatch(value, nullPattern))
-                {
-                    return false;
-                }
+                    return false; // Zablokuj słowo "null"
             }
 
             return true;
@@ -76,21 +71,17 @@ namespace CookingAssistantAPI.Tools.Validators
 
         private bool IsValidValue(string value)
         {
-            // Znaki specjalne do zablokowania
-            string[] specialChars = { "\\" }; // Dodaj inne znaki specjalne, które chcesz zablokować
-            var nullPattern = @"\bnull\b|\bNULL\b"; // Zablokuje samodzielne wystąpienia "null" i "NULL"
+            if (string.IsNullOrWhiteSpace(value))
+                return false; // Zablokuj puste wartości
 
-            // Sprawdź, czy wartość zawiera którykolwiek ze specjalnych znaków
-            if (specialChars.Any(value.Contains))
-            {
-                return false;
-            }
+            string[] specialChars = { "\\", "\n", "\t" };
+            var nullPattern = @"\bnull\b|\bNULL\b";
 
-            // Sprawdź, czy wartość zawiera słowo "null" jako osobne słowo
+            if (specialChars.Any(c => value.Contains(c)))
+                return false; // Zablokuj znaki specjalne
+
             if (System.Text.RegularExpressions.Regex.IsMatch(value, nullPattern))
-            {
-                return false;
-            }
+                return false; // Zablokuj słowo "null"
 
             return true;
         }

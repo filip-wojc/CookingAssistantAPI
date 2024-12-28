@@ -24,7 +24,7 @@ namespace CookingAssistantAPI.Controllers
         {
             if (await _service.AddReviewAsync(recipeId, dto))
             {
-                return Created();
+                return Created("Review Created", new {message = "Review created"});
             }
             return BadRequest();
         }
