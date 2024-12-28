@@ -53,6 +53,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="recipes_tests.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="recipes_full.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

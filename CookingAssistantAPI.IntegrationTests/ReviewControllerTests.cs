@@ -37,9 +37,9 @@ namespace CookingAssistantAPI.IntegrationTests
 
 
         [Theory]
-        [InlineData("54")]
-        [InlineData("21")]
-        [InlineData("600")]
+        [InlineData("45")]
+        [InlineData("756")]
+        [InlineData("901")]
         public async Task CreateReview_WithValidModel_ReturnsCreatedStatus(string recipeId)
         {
             // arrange
