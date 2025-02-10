@@ -37,7 +37,6 @@ Users can add, modify, delete, and manage recipes. Additionally, they can rate r
 - **PdfSharpCore** - PDF file generation
 - **JWT Tokens** - Secure authentication
 - **Dependency Injection** - Built-in dependency injection for service management
-- **xUnit** - For writing integration tests
 ---
 
 ## API Endpoints
